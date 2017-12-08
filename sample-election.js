@@ -14,8 +14,13 @@ for (let i = 0; i < 10; i++) {
 
 console.log('\noriginal choices', election.getChoices(), '\n');
 console.log('\nvotes:\n', election.getVotes());
-console.log('\ntally:\n', election.getTally());
+console.log('\ntally0:\n', election.getCurrentTally());
 
+console.log('\nwinnerAtCurrentTally0:\n', election.winnerAtCurrentTally());
+
+election.tallyFirstRound();
+
+console.log('\nwinnerAtCurrentTally1:\n', election.winnerAtCurrentTally());
 
 
 
@@ -51,7 +56,7 @@ console.log('\ntally:\n', election.getTally());
 // // for testing to see if original data can be mutated
 // const choices = election.getChoices();
 // const votes = election.getVotes();
-// const tally = election.getTally();
+// const tally = election.getCurrentTally();
 
 // choices[0] = 'asfaewfawefawefawfwf';
 // votes[0][0] = 'aaaaaaaaaaaaaaaaaaaa';
@@ -63,7 +68,7 @@ console.log('\ntally:\n', election.getTally());
 
 // console.log('\noriginal choices after', election.getChoices(), '\n');
 // console.log('\nvotes after:\n', election.getVotes());
-// console.log('\ntally after:\n', election.getTally());
+// console.log('\ntally after:\n', election.getCurrentTally());
 
 
 // // for testing to see if creating a new election have any side effects (mutation etc)
@@ -75,8 +80,8 @@ console.log('\ntally:\n', election.getTally());
 
 // console.log('\noriginal choices2', election2.getChoices(), '\n');
 // console.log('\nvotes2:\n', election2.getVotes());
-// console.log('\ntally2:\n', election2.getTally());
+// console.log('\ntally2:\n', election2.getCurrentTally());
 
 // console.log('\noriginal choices1 after', election.getChoices(), '\n');
 // console.log('\nvotes1 after:\n', election.getVotes());
-// console.log('\ntally1 after:\n', election.getTally());
+// console.log('\ntally1 after:\n', election.getCurrentTally());

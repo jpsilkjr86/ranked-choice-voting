@@ -30,26 +30,65 @@ function createElection (...args) {
 			// returns deep copy of votes array (array of arrays) to avoid mutation
 			return JSON.parse(JSON.stringify(votes));
 		},
-		getTally() {
+		getCurrentTally() {
 			// returns object copy of tally
 			return Object.assign({}, tally);
 		},
 		addRankedVote(vote) {
 			votes.push(vote);
+		},
+		// checks if any of the choices has a majority number of votes at current tally
+		winnerAtCurrentTally() {
+			// loops through tally object (the choice key is a string of the choice.
+			// its tally is the number of votes it has.)
+			for (let choice in tally) {
+				// if the number of choice's votes is over 50% of the total number of votes
+				if ((tally[choice] / votes.length) > .5) {
+					// then return the choice as winner at current tally.
+					return {[choice]: tally[choice]};
+				}
+			}
+			// if the above loop doesn't return a winner, then return null.
+			return null;
+		},
+		tallyFirstRound() {
+			// loop through votes array
+			for (let vote of votes) {
+				tally[vote[0]]++;
+			}
 		}
 	}; // end of election object
 	// ***************************************************************
 
-	// returns object prototypically inheriting election methods that
+	// returns object prototypally inheriting election methods that
 	// have privileged access to private data above.
 	return Object.assign({}, election);
 } // end of createElection()
 
 module.exports = createElection;
 
+			// // loops through tally object
+			// for (let choiceTally of tally) {
+			// 	// if the choice has over 50% of the total number of votes
+			// 	if ((choiceTally / votes.length) > .5)
+			// 		// then return the winner at currentTally (copy)
+			// 		return Object.assign({}, choiceTally);
+			// }
+			// // if the above loop doesn't return true then return false by default
+			// return null;
 
-
-
+/*
+[ [ 'Tacos', 'Burgers', 'Dumplings', 'Pizza' ],
+  [ 'Tacos', 'Pizza', 'Burgers', 'Dumplings' ],
+  [ 'Burgers', 'Dumplings', 'Tacos', 'Pizza' ],
+  [ 'Burgers', 'Tacos', 'Pizza', 'Dumplings' ],
+  [ 'Tacos', 'Burgers', 'Dumplings', 'Pizza' ],
+  [ 'Tacos', 'Pizza', 'Dumplings', 'Burgers' ],
+  [ 'Burgers', 'Dumplings', 'Tacos', 'Pizza' ],
+  [ 'Dumplings', 'Tacos', 'Burgers', 'Pizza' ],
+  [ 'Burgers', 'Pizza', 'Tacos', 'Dumplings' ],
+  [ 'Tacos', 'Burgers', 'Pizza', 'Dumplings' ] ]
+  */
 
 
 
