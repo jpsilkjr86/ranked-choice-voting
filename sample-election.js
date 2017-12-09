@@ -1,10 +1,13 @@
 // imports election sampler
-const createElection = require('./election.js');
+const createRankedChoiceElection = require('./election.js');
 // imports arrayShuffler function
 const arrayShuffler = require('./array-shuffler.js');
 
 // creates sample ranked choice election
-const election = createElection('Pizza', 'Dumplings', 'Burgers', 'Tacos');
+const election = createRankedChoiceElection();
+
+// sets the choices or candidates for the election
+election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos']);
 
 // gets 10 sample votes to test ranked choice caclculation
 for (let i = 0; i < 10; i++) {
@@ -12,19 +15,47 @@ for (let i = 0; i < 10; i++) {
 	election.addRankedVote(arrayShuffler(election.getChoices()));
 }
 
-console.log('\noriginal choices', election.getChoices(), '\n');
-console.log('\nvotes:\n', election.getVotes());
-console.log('\ntally0:\n', election.getCurrentTally());
-
-console.log('\nwinnerAtCurrentTally0:\n', election.winnerAtCurrentTally());
+console.log('\nelection.getChoices()', election.getChoices(), '\n');
+console.log('\nelection.getVotes():\n', election.getVotes());
+console.log('\nelection.getCurrentTally():\n', election.getCurrentTally());
+console.log('\nelection.winnerAtCurrentTally():\n', election.winnerAtCurrentTally());
 
 election.tallyFirstRound();
 
 console.log('\nwinnerAtCurrentTally1:\n', election.winnerAtCurrentTally());
+console.log('\nelection.getCurrentTally():\n', election.getCurrentTally());
 
 
 
 
+// // testing immutability of setVotes (passed) and if it can overwrite (passed):
+// const sampleVotes = [];
+// for (let i = 0; i < 10; i++) {
+// 	sampleVotes.push(arrayShuffler(election.getChoices()));
+// }
+
+// election.setVotes(sampleVotes);
+// console.log('sampleVotes', sampleVotes);
+
+// sampleVotes[0][0] = 'KING KONG';
+// console.log('sampleVotes changed:', sampleVotes);
+
+
+// console.log('\nelection.getChoices()', election.getChoices(), '\n');
+// console.log('\nelection.getVotes():\n', election.getVotes());
+
+
+
+// // testing immutability of setChoices (passed):
+
+// const choices = ['Pizza', 'Dumplings', 'Burgers', 'Tacos'];
+// console.log('local choices', choices);
+// election.setChoices(choices);
+// console.log('\nchoices set as:', election.getChoices(), '\n');
+
+// choices[0] = 'King Kong';
+// console.log('local choices', choices);
+// console.log('\nchoices set as:', election.getChoices(), '\n');
 
 
 
@@ -36,7 +67,7 @@ console.log('\nwinnerAtCurrentTally1:\n', election.winnerAtCurrentTally());
 // console.log('election', election);
 // election.getChoices();
 
-// var test = createElection();
+// var test = createRankedChoiceElection();
 // console.log('test', test);
 // test.bazz = 'bizz';
 
@@ -72,7 +103,7 @@ console.log('\nwinnerAtCurrentTally1:\n', election.winnerAtCurrentTally());
 
 
 // // for testing to see if creating a new election have any side effects (mutation etc)
-// const election2 = createElection('banana1', 'banana2', 'banana3', 'banana4');
+// const election2 = createRankedChoiceElection('banana1', 'banana2', 'banana3', 'banana4');
 
 // for (let i = 0; i < 10; i++) {
 // 	election2.addRankedVote(arrayShuffler(election2.getChoices()));

@@ -1,23 +1,32 @@
-
-// createElection takes in choices as arguments and returns an object with methods
-// whose state consists of private variables (achieved by creating a closure)
-function createElection (...args) {
-
+// createRankedChoiceElection returns an object with methods that have privileged access
+// to private variables (achieved by creating a closure)
+function createRankedChoiceElection () {
 	// **************** PRIVATE VARIABLES IN CLOSURE ****************
-	// creates private array "choices" as new array equal to ...args
-	const choices = [...args];
-	// votes array initialized as an empty array
-	const votes = [];
-	// tally is object with running total of votes for each candidate.
-	// it is initialized as an object whose keys are candidate names and
-	// whose values are their corresponding vote tally. Ex: {choice1: 0, choice2: 0}.
-	const tally = choices.reduce((prevChoices, currentChoice) => {
-		// reduce iterates over each value of choices and builds an object that
-		// consists of previous choices (key-value pairs of {choice: 0}) plus
-		// {currentChoice:0}.
-		return Object.assign({}, prevChoices, {[currentChoice]: 0});
-	}, {}); // initial value is empty object
+	// creates private array "choices" (list of candidates)
+	let choices = [];
+	// votes array is an array of arrays (each member array represents ranked-choice vote)
+	let votes = [];
+	// tally is a private object that consists of key-value pairs such that each key
+	// is a string that represents a choice or candidate, and each value is the number
+	// of votes that choice or candidate has earned. Ex: {choice1: 0, choice2: 0}.
+	let tally = null;
 
+	let tallyWithBallots = null;
+
+	// ***************************************************************
+
+	// ********************** PRIVATE FUNCTIONS **********************
+	// initializeTally takes the choices array and converts it to an object where the
+	// keys are set as each choice (candidate) and their values are set as 0, respresenting
+	// their initial vote tallies. 
+	function initializeTally () {
+		tally = choices.reduce((prevChoices, currentChoice) => {
+			// reduce iterates over each value of choices and builds an object that
+			// consists of previous choices (key-value pairs of {choice: 0}) plus
+			// {currentChoice: 0}.
+			return Object.assign({}, prevChoices, {[currentChoice]: 0});
+		}, {}); // initial value is empty object
+	}
 	// ***************************************************************
 
 	// *********************** OBJECT TO RETURN ***********************
@@ -29,6 +38,16 @@ function createElection (...args) {
 		getVotes() {
 			// returns deep copy of votes array (array of arrays) to avoid mutation
 			return JSON.parse(JSON.stringify(votes));
+		},
+		setChoices(choicesArg) {
+			// sets choices equal to a copy of the array argument
+			choices = [...choicesArg];
+			// calls private function initializeTally()
+			initializeTally();
+		},
+		setVotes(votesArg) {
+			// sets votes equal to a two-level-deep copy of the votesArg array
+			votes = votesArg.map(vote => [...vote]);
 		},
 		getCurrentTally() {
 			// returns object copy of tally
@@ -63,9 +82,9 @@ function createElection (...args) {
 	// returns object prototypally inheriting election methods that
 	// have privileged access to private data above.
 	return Object.assign({}, election);
-} // end of createElection()
+} // end of createRankedChoiceElection()
 
-module.exports = createElection;
+module.exports = createRankedChoiceElection;
 
 			// // loops through tally object
 			// for (let choiceTally of tally) {
@@ -91,6 +110,11 @@ module.exports = createElection;
   */
 
 
+// PSEUDOCODE FOR GETTING RESULT OF RANKED CHOICE ELECTION
+
+// iterate through votes array, starting at index 0
+
+	// 
 
 
 
@@ -102,10 +126,9 @@ module.exports = createElection;
 
 
 
-
-// // createElection takes in choices as arguments and returns an object with methods
+// // createRankedChoiceElection takes in choices as arguments and returns an object with methods
 // // whose state consists of private variables (achieved by creating a closure)
-// function createElection (...args) {
+// function createRankedChoiceElection (...args) {
 // 	// creates private array "choices" as new array equal to ...args
 // 	const choices = [...args];
 // 	// votes array initialized as an empty array
@@ -127,4 +150,4 @@ module.exports = createElection;
 // 	}
 // }
 
-// module.exports = createElection;
+// module.exports = createRankedChoiceElection;
