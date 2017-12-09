@@ -17,3 +17,4 @@ for (let i = 0; i < 10; i++) {
 
 console.log('\nelection.getChoices()', election.getChoices(), '\n');
 console.log('\nelection.getVotes():\n', election.getVotes());
+console.log('\nelection.calculateResult():\n', election.calculateResult());
