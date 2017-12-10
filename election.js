@@ -4,40 +4,68 @@
 function createRankedChoiceElection () {
 
 	// **************** PRIVATE VARIABLES IN CLOSURE ****************
+
 	// creates private array "_choices" (list of candidates)
 	let _choices = [];
 
 	// _votes array is an array of arrays (each member array represents ranked-choice vote)
 	let _votes = [];
 
-	// _tally is a private object that consists of key-value pairs such that each key
-	// is a string that represents a choice or candidate, and each value is the an array
-	// of votes that choice or candidate has earned. Ex: {choice1: [~~], choice2: [~~]}.
-	let _tally = null;
-
 	// ***************************************************************
 
 
 	// ********************** PRIVATE FUNCTIONS **********************
 
-	// _initializeTally takes the _choices array and converts it to an object where the
-	// keys are set as each element of choice and their values are set as empty arrays.
-	function _initializeTally () {
-		_tally = _choices.reduce((prev_choices, currentChoice) => {
-			// reduce iterates over each value of _choices and builds an object that
-			// consists of previous _choices (key-value pairs of {choice: 0}) plus
-			// {currentChoice: 0}.
-			return Object.assign({}, prev_choices, {[currentChoice]: []});
-		}, {}); // initial value is empty object
+	// creates tally object
+	function _createTally(candidates) {
+		// first builds tally data:
+		// .reduce here operates on the candidates array and returns an object whose
+		// keys are set as each element of candidates and whose values are set as empty arrays,
+		// which will hold each ranked vote that is counted toward each candidate.
+		const tally = candidates.reduce((prev, currentCandidate) => {
+			// reduce iterates over each element of candidates and builds an object that
+			// consists of previous candidates (key-value pairs of {candidateName: []}) plus
+			// {currentCandidate: []}.
+			return Object.assign({}, prev, {[currentCandidate]: []}); // same as {...prev, ~~} ?
+		}, {}); // initial value is empty object (so .reduce knows what to start building upon)
+
+		// adds a non-enumerable method to tally called 'addVotes' (needs to be non-enumerable
+		// so as to prevent it from showing up in a for-in loop).
+		Object.defineProperty(tally, 'addVotes', {
+		  enumerable: false,
+		  value: function(votes) {
+				// loops through votes array once
+				for (let vote of votes) {
+					// breaking condition for each vote
+					let isTallied = false;
+					// loops through ranked vote, breaks if it reaches the end of the
+					// vote or if isTallied == true. this will ensure that votes are
+					// only tallied for non-eliminated choices.
+					for (let j = 0; j < vote.length && !isTallied; j++) {
+						// if tally object has property "vote[j]"
+						// (i.e. if the choice is still active in the election)
+						if (this.hasOwnProperty(vote[j])) {
+							// then push the ranked vote onto the property of tally object
+							// that matches the choice at vote[j].
+							this[vote[j]].push(vote)
+							isTallied = true;
+						}
+					} // end of inner for loop
+				} // end of for-of loop
+			} // end of value
+		});
+
+		// returns object with tally properties and prototyped methods
+		return tally;
 	}
 
-	function _getInitialTally() {
-		return _choices.reduce((prev_choices, currentChoice) => {
-			// reduce iterates over each value of _choices and builds an object that
-			// consists of previous _choices (key-value pairs of {choice: 0}) plus
-			// {currentChoice: 0}.
-			return Object.assign({}, prev_choices, {[currentChoice]: []});
-		}, {}); // initial value is empty object
+	function _generateInitialResultsData() {
+		return {
+			// copy of private _choices array
+			choices: [..._choices],
+			// two-level-deep copy of private _votes array
+			submitted_ballots: _votes.map(vote => [...vote])
+		};
 	}
 
 	// checks if any of the choices has a majority number of votes at current round tally
@@ -45,10 +73,12 @@ function createRankedChoiceElection () {
 		// loops through tallyAtCurrentRound object (the choice key is a string of the choice.
 		// its tally is the number of votes it has.)
 		for (let choice in tallyAtCurrentRound) {
-			// if the number of choice's votes is over 50% of the total number of numOfBallots
-			if ((tallyAtCurrentRound[choice].length / numOfBallots) > .5) {
-				// then return the choice as winner at current tally.
-				return {[choice]: tallyAtCurrentRound[choice].length};
+			// numOfVotes equals the number of vote elements pushed onto tallyAtCurrentRound[choice]
+			const numOfVotes = tallyAtCurrentRound[choice].length;
+			// if the number of the candidate's votes is over 50% of the total number of ballots cast
+			if (( numOfVotes / numOfBallots) > .5) {
+				// then return the choice as winner at current tally (object with choiceName: numOfVotes)
+				return {[choice]: numOfVotes};
 			}
 		}
 		// if the above loop doesn't return a winner, then return null.
@@ -61,6 +91,7 @@ function createRankedChoiceElection () {
 		let lowest;
 		// loops through tally object
 		for (let choice in tallyAtCurrentRound) {
+			// console.log('_findLowestScoreChoice\n', choice, tallyAtCurrentRound[choice]);
 			// if lowest is undefined, set equal to choice.
 			if (!lowest) {
 				lowest = choice;
@@ -79,45 +110,25 @@ function createRankedChoiceElection () {
 
 	// main algorithm of ranked choice election (recursive)
 	function _calculateElectionResults(	// default parameter values:
-																			currentTally = _getInitialTally(),
+																			currentTally = _createTally(_choices),
 																			votesToCount = _votes.map(vote => [...vote]),
 																			roundNum = 1,
-																			resultsData = {} ) {
+																			resultsData = _generateInitialResultsData() ) {
 		// ================== Tally Votes ==================
 
-		// loops through votesToCount array once
-		for (let vote of votesToCount) {
-			// breaking condition for each vote
-			let isTallied = false;
-			// loops through vote, breaks if it reaches the end of the vote or if isTallied == true.
-			// this will ensure that votes are only tallied for non-eliminated choices.
-			for (let j = 0; j < vote.length && !isTallied; j++) {
-				// if currentTally has property (vote[j])
-				// (i.e. if the choice is still active in the election)
-				if (currentTally.hasOwnProperty(vote[j])) {
-					// then push the ranked vote onto the property of currentTally
-					// that matches the choice at vote[j].
-					currentTally[vote[j]].push(vote)
-					isTallied = true;
-				}
-			}
-		}
-		// console.log('currentTally at round ' + roundNum + '\n', currentTally);
+		currentTally.addVotes(votesToCount);
+		
+		console.log('currentTally at round ' + roundNum + '\n', currentTally);
+
 		// ============ Build resultsData Object ============
 
-		// adds this initial data only if roundNum == 1
-		if (roundNum == 1) {
-			// sets resultsData.choices equal to copy of private _choices array
-			resultsData.choices = [..._choices];
-			// sets resultsData.submitted_ballots to two-level-deep copy of private _votes array
-			resultsData.submitted_ballots = _votes.map(vote => [...vote]);
-		}
-
 		// sets round-specific data (useful for election analytics and results verification)
-		resultsData[`round_${roundNum}`] = { 
+		resultsData[`round_${roundNum}`] = {
+			// winner might be returned as null or not null depending on tally
 			winner: _winnerAtCurrentRound(currentTally, resultsData.submitted_ballots.length),
 			// needs deep copy
 			tally: JSON.parse(JSON.stringify(currentTally)),
+			// eliminated set initially to null (may change below)
 			eliminated: null
 		};
 
@@ -127,7 +138,7 @@ function createRankedChoiceElection () {
 
 		// if the round has a winner
 		if (resultsData[`round_${roundNum}`].winner) {
-			// set resultsData.winner equal to round winner
+			// set overall winner equal to round winner
 			resultsData.winner = resultsData[`round_${roundNum}`].winner;
 			// return resultsData
 			return resultsData;
@@ -135,6 +146,7 @@ function createRankedChoiceElection () {
 
 		// if no winner, then calculate who was eliminated in that round.
 		const eliminated =_findLowestScoreChoice(currentTally);
+		console.log('eliminated', eliminated);
 		// extracts votesForEliminated from currentTally (2-level-deep copy)
 		const votesForEliminated = currentTally[eliminated].map(vote => [...vote]);
 		// deletes eliminated from currentTally
@@ -169,8 +181,6 @@ function createRankedChoiceElection () {
 		setChoices(choicesArg) {
 			// sets _choices equal to a copy of the array argument
 			_choices = [...choicesArg];
-			// calls private function _initializeTally()
-			_initializeTally();
 		},
 		setVotes(votesArg) {
 			// sets votes equal to a two-level-deep copy of the votesArg array
@@ -193,6 +203,93 @@ function createRankedChoiceElection () {
 } // end of createRankedChoiceElection()
 
 module.exports = createRankedChoiceElection;
+
+// // creates tally object
+// 	function _createTally(candidates) {
+// 		// first builds tally data:
+// 		// .reduce here operates on the candidates array and returns an object whose
+// 		// keys are set as each element of candidates and whose values are set as empty arrays,
+// 		// which will hold each ranked vote that is counted toward each candidate.
+// 		const tally = candidates.reduce((prev, currentCandidate) => {
+// 			// reduce iterates over each element of candidates and builds an object that
+// 			// consists of previous candidates (key-value pairs of {candidateName: []}) plus
+// 			// {currentCandidate: []}.
+// 			return Object.assign({}, prev, {[currentCandidate]: []}); // same as {...prev, ~~} ?
+// 		}, {}); // initial value is empty object (so .reduce knows what to start building upon)
+
+// 		// methods to be attached to tally object:
+// 		const methods = {
+// 			// for adding votes to tally
+// 			addVotes(votes) {
+// 				// loops through votes array once
+// 				for (let vote of votes) {
+// 					// breaking condition for each vote
+// 					let isTallied = false;
+// 					// loops through ranked vote, breaks if it reaches the end of the
+// 					// vote or if isTallied == true. this will ensure that votes are
+// 					// only tallied for non-eliminated choices.
+// 					for (let j = 0; j < vote.length && !isTallied; j++) {
+// 						// if tally object has property "vote[j]"
+// 						// (i.e. if the choice is still active in the election)
+// 						if (this.hasOwnProperty(vote[j])) {
+// 							// then push the ranked vote onto the property of tally object
+// 							// that matches the choice at vote[j].
+// 							this[vote[j]].push(vote)
+// 							isTallied = true;
+// 						}
+// 					} // end of inner for loop
+// 				} // end of for-of loop
+// 			} // end of addVotes()
+// 		}; // end of methods
+
+// 		// returns object with tally properties and prototyped methods
+// 		return Object.assign(Object.create(methods), tally);
+// 	}
+
+// // creates tally object
+// 	function _createTally(candidates) {
+// 		// Tally that takes in args array and builds key-value
+// 		// pairs such that the key is the arg[i] string and the value
+// 		// is an empty array.
+// 		function Tally (args) {
+// 			args.forEach(arg => {
+// 				this[arg] = [];
+// 			});
+// 		}
+
+// 		// methods to be prototypally attached:
+
+// 		// for adding votes to tally
+// 		Tally.prototype.addVotes = function(votes) {
+// 			// loops through votes array once
+// 			for (let vote of votes) {
+// 				// breaking condition for each vote
+// 				let isTallied = false;
+// 				// loops through ranked vote, breaks if it reaches the end of the
+// 				// vote or if isTallied == true. this will ensure that votes are
+// 				// only tallied for non-eliminated choices.
+// 				for (let j = 0; j < vote.length && !isTallied; j++) {
+// 					// if tally object has property "vote[j]"
+// 					// (i.e. if the choice is still active in the election)
+// 					if (this.hasOwnProperty(vote[j])) {
+// 						// then push the ranked vote onto the property of tally object
+// 						// that matches the choice at vote[j].
+// 						this[vote[j]].push(vote)
+// 						isTallied = true;
+// 					}
+// 				} // end of inner for loop
+// 			} // end of for-of loop
+// 		} // end of addVotes()
+
+
+// 		const tally = new Tally(candidates);
+// 		console.log('_createTally', tally);
+
+// 		// returns object with tally properties and prototyped methods
+// 		return tally;
+// 	}
+
+
 
 /*
 [ [ 'Tacos', 'Burgers', 'Dumplings', 'Pizza' ],
