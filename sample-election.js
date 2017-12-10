@@ -17,13 +17,12 @@ for (let i = 0; i < 10; i++) {
 
 console.log('\nelection.getChoices()', election.getChoices(), '\n');
 console.log('\nelection.getVotes():\n', election.getVotes());
-console.log('\nelection.getCurrentTally():\n', election.getCurrentTally());
-console.log('\nelection.winnerAtCurrentTally():\n', election.winnerAtCurrentTally());
+console.log('\nelection.calculateResult():\n', election.calculateResult());
 
-election.tallyFirstRound();
 
-console.log('\nwinnerAtCurrentTally1:\n', election.winnerAtCurrentTally());
-console.log('\nelection.getCurrentTally():\n', election.getCurrentTally());
+
+
+
 
 
 
