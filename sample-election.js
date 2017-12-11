@@ -10,7 +10,7 @@ const election = createRankedChoiceElection();
 election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos']);
 
 // gets 10 sample votes to test ranked choice caclculation
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 40; i++) {
 	// adds a random arrangement of the elction choices to the votes
 	election.addRankedVote(arrayShuffler(election.getChoices()));
 }
