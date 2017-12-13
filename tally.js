@@ -1,3 +1,6 @@
+// dependencies
+const createResultsHelper = require('./results-helper.js');
+
 // createTally returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
 function createTally(candidatesArg, votesArg) {
@@ -41,7 +44,7 @@ function createTally(candidatesArg, votesArg) {
 
 	// _sortVotes will sort the incoming votes by pushing them into each 
 	// candidate's array within the _tally object.
-	function _sortVotes(votes) {
+	const _sortVotes = votes => {
 		// loops through votes array once
 		for (let vote of votes) {
 			// breaking condition for each vote
@@ -60,10 +63,10 @@ function createTally(candidatesArg, votesArg) {
 				}
 			} // end of inner for loop
 		} // end of for-of loop
-	} // end of _sortVotes definition
+	}; // end of _sortVotes definition
 
 	// checks if any of the candidates has a majority number of votes and, if so, returns the winner.
-	function _getMajorityVotesCandidate () {
+	const _getMajorityVotesCandidate = () => {
 		// loops through _tally object (the candidate key is a string of the candidate's name.
 		// its tally is the number of votes it has.)
 		for (let candidate in _tally) {
@@ -77,10 +80,10 @@ function createTally(candidatesArg, votesArg) {
 		}
 		// if the above loop doesn't return a winner, then return null.
 		return null;
-	} // end of _getMajorityVotesCandidate definition
+	}; // end of _getMajorityVotesCandidate definition
 
 	// returns the name of the candidate who has received the least number of votes.
-	function _getLowestScoreCandidate () {
+	const _getLowestScoreCandidate = () => {
 		// set lowest as initially undefined
 		let lowest;
 		// loops through _tally object
@@ -99,61 +102,44 @@ function createTally(candidatesArg, votesArg) {
 			}
 		}
 		return lowest;
-	} // end of _getLowestScoreCandidate definition
+	}; // end of _getLowestScoreCandidate definition
 
-	function _eliminate (candidate) {
+	const _eliminate = candidate => {
 		// deletes eliminated candidate from _tally
 		delete _tally[candidate];
-	}
+	};
 
+	// ********** main algorithm of ranked choice election (recursive) **********
+	const _processResultsCalculation = function (	// default parameter values:
+																				votesToCount = _votes.map(vote => [...vote]),
+																				roundNum = 1,
+																				results = createResultsHelper(_candidates, _votes) ) {
 
-	function _generateInitialResultsData() {
-		return {
-			// copy of private _candidates array
-			choices: [..._candidates],
-			// two-level-deep copy of private _votes array
-			submitted_ballots: _votes.map(vote => [...vote])
-		};
-	}
-
-	function _processResultsCalculation(// default parameter values:
-																			votesToCount = _votes.map(vote => [...vote]),
-																			roundNum = 1,
-																			resultsData = _generateInitialResultsData() ) {
-
-		// ================== Tally Votes ==================
-
+		// sorts votes to active (non-eliminated) candidate who earned them
 		_sortVotes(votesToCount);
-		
+
+		// retrieves candidate who has more than 50% of the vote, if exists
+		const winner = _getMajorityVotesCandidate();
+
+		// determines who has been eliminated, if anyone. if no winner, then sets eliminated
+		// equal to the candidate who received the least number of votes. if there is a
+		// winner, then sets it equal to null.
+		const eliminated = (winner == null ? _getLowestScoreCandidate() : null);
+
+		// adds round data to results data
+		results.addRoundData(roundNum, winner, eliminated, _tally);
+
 		console.log('currentTally at round ' + roundNum + '\n', _tally);
+		console.log('eliminated', eliminated);
 
-		// ============ Build resultsData Object ============
-
-		// sets round-specific data (useful for election analytics and results verification)
-		resultsData[`round_${roundNum}`] = {
-			// winner might be returned as null or not null depending on _tally
-			winner: _getMajorityVotesCandidate(),
-			// needs deep copy
-			tally: JSON.parse(JSON.stringify(_tally)),
-			// eliminated set initially to null (may change below)
-			eliminated: null
-		};
-
-
-		// ============= Determine Return Value =============
-		// ============ (and whether to recurse) ============
-
-		// if the round has a winner
-		if (resultsData[`round_${roundNum}`].winner) {
-			// set overall winner equal to round winner
-			resultsData.winner = resultsData[`round_${roundNum}`].winner;
-			// return resultsData
-			return resultsData;
+		// if there's a winner, adds it to the results data and returns the data (end of calculation)
+		if (winner) {
+			results.addElectionWinner(winner);
+			return results.getData();
 		}
 
-		// if no winner, then find who had received the least number of votes in the round.
-		const eliminated = _getLowestScoreCandidate();
-		console.log('eliminated', eliminated);
+		// if there's no winner, then we need to remove the eliminated candidate from the pool
+		// and redistribute their votes among the remaining active candidates.
 
 		// extracts votesForEliminated from _tally at eliminated key (2-level-deep copy)
 		const votesForEliminated = _tally[eliminated].map(vote => [...vote]);
@@ -161,19 +147,13 @@ function createTally(candidatesArg, votesArg) {
 		// eliminates candidate with least number of votes from _tally (deletes property)
 		_eliminate(eliminated);
 
-		// adds eliminated to resultsData object at the current round.
-		resultsData[`round_${roundNum}`].eliminated = eliminated;
-
-		// console.log('resultsData at end of round' + roundNum + '\n', resultsData);
-
-		// if it's reached this point, then it means a winner has yet to be determined.
-		// then the function should call itself recursively, making sure to pass on resultsData,
-		// votesForEliminated and roundNum so as to continue them in the next rounds.
+		// the function calls itself recursively, making sure to pass on results,
+		// votesForEliminated and roundNum so as to continue building upon them in the next rounds.
 		return _processResultsCalculation(votesForEliminated,
 																			++roundNum,
-																			resultsData );
+																			results );
 
-	} // end of _processResultsCalculation
+	}; // end of _processResultsCalculation
 
 	// ******************************************************************
 
@@ -193,30 +173,3 @@ function createTally(candidatesArg, votesArg) {
 } // end of createTally
 
 module.exports = createTally;
-
-
-/*
-  preferred result object:
-  {
-	  choices: [],
-	  submitted_ballots: [],
-	  winner: (string),
-	  round_1: {
-	    tally: {
-	      choice1: X,
-	      choice2: X,
-	      ~~
-	    },
-	    winner: (null or string),
-	    eliminated: (null or string)
-	  },
-	  round_2: {
-	    tally: {
-	      ~~
-	    },
-	    ~~
-	  },
-	  ~~
-	}
-
-	*/

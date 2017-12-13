@@ -16,8 +16,7 @@ function createRankedChoiceElection () {
 
 	// ********************** PRIVATE FUNCTIONS **********************
 
-	// main algorithm of ranked choice election (recursive)
-	function _calculateElectionResults() {
+	const _calculateElectionResults = () => {
 
 		const rankedChoiceTally = createTally(_choices, _votes);
 
@@ -25,7 +24,7 @@ function createRankedChoiceElection () {
 
 		return electionResults;
 
-	} // end of _calculateElectionResults()
+	}; // end of _calculateElectionResults()
 
 
 	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
