@@ -13,7 +13,7 @@ function createTally(candidatesArg, votesArg) {
 
 	// Builds Initial Structure of Object To Be Returned:
 
-	/* Intended strucutre: {
+	/* Intended strucutre of _tally object: {
 	
 		candiatateOne: [~~],
 		candiatateTwo: [~~],
@@ -193,3 +193,30 @@ function createTally(candidatesArg, votesArg) {
 } // end of createTally
 
 module.exports = createTally;
+
+
+/*
+  preferred result object:
+  {
+	  choices: [],
+	  submitted_ballots: [],
+	  winner: (string),
+	  round_1: {
+	    tally: {
+	      choice1: X,
+	      choice2: X,
+	      ~~
+	    },
+	    winner: (null or string),
+	    eliminated: (null or string)
+	  },
+	  round_2: {
+	    tally: {
+	      ~~
+	    },
+	    ~~
+	  },
+	  ~~
+	}
+
+	*/
