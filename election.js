@@ -18,16 +18,58 @@ function createRankedChoiceElection () {
 
 	// ********************** PRIVATE FUNCTIONS **********************
 
-	function _generateInitialResultsData() {
-		return {
-			// copy of private _choices array
-			choices: [..._choices],
-			// two-level-deep copy of private _votes array
-			submitted_ballots: _votes.map(vote => [...vote])
-		};
-	}
-
 	// main algorithm of ranked choice election (recursive)
+	function _calculateElectionResults() {
+
+		const rankedChoiceTally = createTally(_choices, _votes);
+
+		const electionResults = rankedChoiceTally.calculate();
+
+		return electionResults;
+
+	} // end of _calculateElectionResults()
+
+	// ***************************************************************
+
+
+	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
+	const electionPrototype = {
+		// returns copy of choices array rather than ref to it so it can't be mutated
+		getChoices() {
+			return [..._choices];
+		},
+		getVotes() {
+			// returns deep copy of _votes array (array of arrays) to avoid mutation
+			return JSON.parse(JSON.stringify(_votes));
+		},
+		setChoices(choicesArg) {
+			// sets _choices equal to a copy of the array argument
+			_choices = [...choicesArg];
+		},
+		setVotes(votesArg) {
+			// sets votes equal to a two-level-deep copy of the votesArg array
+			_votes = votesArg.map(vote => [...vote]);
+		},
+		addRankedVote(vote) {
+			_votes.push(vote);
+		},
+		calculateResult() {
+			return _calculateElectionResults();
+		}
+	}; // end of electionPrototype
+
+	// ***************************************************************
+
+	// returns object prototypally inheriting electionPrototype methods that
+	// have privileged access to private data above.
+	return Object.assign({}, electionPrototype);
+
+} // end of createRankedChoiceElection()
+
+module.exports = createRankedChoiceElection;
+
+/*
+// main algorithm of ranked choice election (recursive)
 	function _calculateElectionResults(	// default parameter values:
 																			currentTally = createTally(_choices, _votes.length),
 																			votesToCount = _votes.map(vote => [...vote]),
@@ -88,44 +130,8 @@ function createRankedChoiceElection () {
 
 	} // end of _calculateElectionResults()
 
-	// ***************************************************************
+*/
 
-
-	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
-	const electionPrototype = {
-		// returns copy of choices array rather than ref to it so it can't be mutated
-		getChoices() {
-			return [..._choices];
-		},
-		getVotes() {
-			// returns deep copy of _votes array (array of arrays) to avoid mutation
-			return JSON.parse(JSON.stringify(_votes));
-		},
-		setChoices(choicesArg) {
-			// sets _choices equal to a copy of the array argument
-			_choices = [...choicesArg];
-		},
-		setVotes(votesArg) {
-			// sets votes equal to a two-level-deep copy of the votesArg array
-			_votes = votesArg.map(vote => [...vote]);
-		},
-		addRankedVote(vote) {
-			_votes.push(vote);
-		},
-		calculateResult() {
-			return _calculateElectionResults();
-		}
-	}; // end of electionPrototype
-
-	// ***************************************************************
-
-	// returns object prototypally inheriting electionPrototype methods that
-	// have privileged access to private data above.
-	return Object.assign({}, electionPrototype);
-
-} // end of createRankedChoiceElection()
-
-module.exports = createRankedChoiceElection;
 
 /*
 [ [ 'Tacos', 'Burgers', 'Dumplings', 'Pizza' ],
