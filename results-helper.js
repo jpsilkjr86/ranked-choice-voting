@@ -46,13 +46,15 @@ function createResults (choices, votes) {
 			return JSON.parse(JSON.stringify(_resultsData));
 		},
 		// adds round data to private _resultsData
-		addRoundData(roundNum, winner, eliminated, roundTally) {
+		addRoundData(data) {
+			// destructures roundNum, roundTally, winner, eliminated from data
+			const { roundNum, tally, winner = null, eliminated = null } = data;
 			// sets round-specific data (useful for election analytics and results verification)
 			_resultsData[`round_${roundNum}`] = {
 				// sets winner to null if null; otherwise makes shallow object copy
 				winner: (winner == null ? null : Object.assign({}, winner)),
 				// records deep copy
-				tally: JSON.parse(JSON.stringify(roundTally)),
+				tally: JSON.parse(JSON.stringify(tally)),
 
 				eliminated: eliminated
 			};

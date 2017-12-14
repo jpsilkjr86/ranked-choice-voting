@@ -83,26 +83,33 @@ function createTally(candidatesArg, votesArg) {
 	}; // end of _getMajorityVotesCandidate definition
 
 	// returns the name of the candidate who has received the least number of votes.
-	const _getLowestScoreCandidate = () => {
-		// set lowest as initially undefined
-		let lowest;
+	const _getLowestScoreCandidates = () => {
+		// sets lowest as an initially empty array
+		let lowest = [];
 		// loops through _tally object
 		for (let choice in _tally) {
-			// if lowest is undefined, set equal to choice.
-			if (!lowest) {
-				lowest = choice;
+			// if there are no elements in lowest, push the choice (first iteration)
+			if (!lowest.length) {
+				lowest.push(choice);
 			}
 			// otherwise compare values
 			else {
-				// if the current choice has less votes than lowest,
-				// then reset lowest to the current choice
-				if (_tally[choice].length < _tally[lowest].length) {
-					lowest = choice;
+				// if the current choice has fewer votes than lowest[0],
+				// then empties lowest array and sets lowest[0] to the current choice
+				if (_tally[choice].length < _tally[lowest[0]].length) {
+					lowest = [];
+					lowest.push(choice);
 				}
+				// if the current choice has the same number of votes as lowest[0],
+				// then pushes current choice onto the lowest array
+				else if (_tally[choice].length == _tally[lowest[0]].length) {
+					lowest.push(choice);
+				}
+				// if neither of the above two conditions are true, then just continues loop.
 			}
 		}
 		return lowest;
-	}; // end of _getLowestScoreCandidate definition
+	}; // end of _getLowestScoreCandidates definition
 
 	const _eliminate = candidate => {
 		// deletes eliminated candidate from _tally
@@ -121,24 +128,51 @@ function createTally(candidatesArg, votesArg) {
 		// retrieves candidate who has more than 50% of the vote, if exists
 		const winner = _getMajorityVotesCandidate();
 
-		// determines who has been eliminated, if anyone. if no winner, then sets eliminated
-		// equal to the candidate who received the least number of votes. if there is a
-		// winner, then sets it equal to null.
-		const eliminated = (winner == null ? _getLowestScoreCandidate() : null);
-
-		// adds round data to results data
-		results.addRoundData(roundNum, winner, eliminated, _tally);
-
-		console.log('currentTally at round ' + roundNum + '\n', _tally);
-		console.log('eliminated', eliminated);
-
 		// if there's a winner, adds it to the results data and returns the data (end of calculation)
 		if (winner) {
+			// adds the round data to the results data
+			results.addRoundData({
+				roundNum: roundNum,
+				winner: winner,
+				// eliminated: null,
+				tally: _tally
+			});
+			// adds the winner of the whole election to the results data
 			results.addElectionWinner(winner);
+			// returns the results data (end of calculation)
 			return results.getData();
 		}
 
-		// if there's no winner, then we need to remove the eliminated candidate from the pool
+		// if no winner has been determined, proceeds to the following lines:
+
+		// gets candidates with least number of votes
+		// (returns array, which may have 1 or more elements)
+		const lowestScoreCandidates =  _getLowestScoreCandidates();
+		console.log('lowestScoreCandidates', lowestScoreCandidates, '\n');
+		// temp variable
+		let eliminated;
+
+		// if there's a tie for the lowest number of votes, proceed to runoff
+		if (lowestScoreCandidates.length > 1) {
+
+			console.log('tie: proceeding to runoff election.', '\n');
+			// creates an entirely new tally for calculating results of run-off election
+			const runOffElectionTally = createTally(lowestScoreCandidates, _votes);
+
+			const runOffElectionResults = runOffElectionTally.calculate();
+			console.log('winner of run-off election:', runOffElectionResults.winner);
+			// get runoff results data
+			eliminated = (runOffElectionResults.winner == lowestScoreCandidates[0] ? lowestScoreCandidates[1] : lowestScoreCandidates[0]);
+		}
+		else {
+			eliminated = lowestScoreCandidates[0];
+		}			
+
+		console.log('currentTally at round ' + roundNum + '\n', _tally);
+		console.log('eliminated', eliminated);
+		
+
+		// now we need to remove the eliminated candidate from the pool
 		// and redistribute their votes among the remaining active candidates.
 
 		// extracts votesForEliminated from _tally at eliminated key (2-level-deep copy)
@@ -173,3 +207,31 @@ function createTally(candidatesArg, votesArg) {
 } // end of createTally
 
 module.exports = createTally;
+
+
+/*
+// sorts votes to active (non-eliminated) candidate who earned them
+		_sortVotes(votesToCount);
+
+		// retrieves candidate who has more than 50% of the vote, if exists
+		const winner = _getMajorityVotesCandidate();
+
+		// if no winner, check for ties among eliminated candidates
+
+		// determines who has been eliminated, if anyone. if no winner, then sets eliminated
+		// equal to the candidate who received the least number of votes. if there is a
+		// winner, then sets it equal to null.
+		const eliminated = (winner == null ? _getLowestScoreCandidate() : null);
+
+		// adds round data to results data
+		results.addRoundData(roundNum, winner, eliminated, _tally);
+
+		console.log('currentTally at round ' + roundNum + '\n', _tally);
+		console.log('eliminated', eliminated);
+
+		// if there's a winner, adds it to the results data and returns the data (end of calculation)
+		if (winner) {
+			results.addElectionWinner(winner);
+			return results.getData();
+		}
+		*/
