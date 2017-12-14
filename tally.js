@@ -1,5 +1,6 @@
 // dependencies
 const createResultsHelper = require('./results-helper.js');
+const createRunoff = require('./runoff.js');
 
 // createTally returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
@@ -156,13 +157,14 @@ function createTally(candidatesArg, votesArg) {
 		if (lowestScoreCandidates.length > 1) {
 
 			console.log('tie: proceeding to runoff election.', '\n');
-			// creates an entirely new tally for calculating results of run-off election
-			const runOffElectionTally = createTally(lowestScoreCandidates, _votes);
+			// creates a runoff election
+			const runoff = createRunoff(lowestScoreCandidates, _votes);
 
-			const runOffElectionResults = runOffElectionTally.calculate();
-			console.log('winner of run-off election:', runOffElectionResults.winner);
-			// get runoff results data
-			eliminated = (runOffElectionResults.winner == lowestScoreCandidates[0] ? lowestScoreCandidates[1] : lowestScoreCandidates[0]);
+			const runoffResults = runoff.calculate();
+
+			console.log('eliminated in run-off election:', runoffResults.eliminated);
+
+			eliminated = runoffResults.eliminated;
 		}
 		else {
 			eliminated = lowestScoreCandidates[0];
