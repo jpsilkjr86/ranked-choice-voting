@@ -1,8 +1,11 @@
-
+// runoff elections are for the purpose of resolving ties between candidates at any point
+// in the ranked-choice-election process. it doesn't determine a winner; it determines who
+// must be eliminated among the competing candidates -- i.e. whose votes must be redistributed
+// among the remaining candidates in the ranked choice election.
 function createRunoff (candidatesArg, votesArg) {
-	
+	// copies candidatesArg
 	const _candidates = [...candidatesArg];
-
+	// copies votesArg (two levels deep)
 	const _votes = votesArg.map(vote => [...vote]);
 
 	// creates object such that the keys are candidate names and their vales are set as 0.
@@ -11,10 +14,22 @@ function createRunoff (candidatesArg, votesArg) {
 		return Object.assign({}, {currentCandidate: 0});
 	}, {}); // empty object is first value of reduce
 
+	// increments vote tally for a candidate argument
 	const _addVoteToCandidateTally = candidateName => {
 		_runoffTally[candidateName]++;
 	}
 
+	// checks which candidate in _runoffTally has the least number of votes
+	// among candidates received as an argument. It is important to make the
+	// competingCandidates an argument that can be passed in, since in theory
+	// it is possible for three or more candidates to be competing in a runoff
+	// election, and for there to be ties even within the runoff election.
+	// this algorithm will resolve this by only passing in candidates who have
+	// received the least number of votes as query parameters in the _runoffTally
+	// object. in this way, candidates who have not received the least number of
+	// votes will be removed from the competingCandidates naturally, but will not
+	// be eliminated from the runoff election as a whole (remembering that the purpose
+	// runoff election algorithm is to return the eliminated candidate, not a winner).
 	const _getCandidateWithLeastVotes = competingCandidates => {
 		// sets lowest as an initially empty array
 		let lowest = [];
@@ -43,7 +58,13 @@ function createRunoff (candidatesArg, votesArg) {
 		return lowest;
 	}
 
-	// calculcates results
+	// calculcates results (can call itself recursively to iterate through the ranks).
+	// the idea is to check to see who has received the least number of first-place votes
+	// and return that candidate as eliminated. If there is a tie for the least number of
+	// votes among the runoff candidates, then this algorithm will proceed to check the second
+	// place votes and tally from there -- continuing in this fashion until all there are no more
+	// rankIndex's to check. If there is still a tie by the end, then the eliminated candidate will
+	// be determined by a simple random selection.
 	const _processRunoffCalculation = function (// default values
 																							rankIndex = 0, // iterator
 																							runoffCandidates = [..._candidates],
@@ -96,3 +117,32 @@ function createRunoff (candidatesArg, votesArg) {
 }
 
 module.exports = createRunoff;
+
+
+// runoff election data - intended structure:
+/*
+	{
+	  runoff: {
+			runoff_candidates: (array),
+			eliminated: (string),
+			rank_1_results: {
+				tally: {
+					choice1: X,
+					choice2: X
+				},
+				is_resovled: (boolean),
+				least_votes_candidates: (array),
+				most_votes_candidates: (array)
+			},
+			rank_2_results: {
+				tally: {
+					choice1: X,
+					choice2: X
+				},
+				is_resovled: (boolean),
+				least_votes_candidates: (array),
+				most_votes_candidates: (array)	
+			}
+    }
+  }
+*/

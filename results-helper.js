@@ -11,7 +11,29 @@
 	      ~~
 	    },
 	    winner: (null or string),
-	    eliminated: (null or string)
+	    eliminated: (null or string),
+	    runoff: {
+				runoff_candidates: (array),
+				eliminated: (string),
+				rank_1_results: {
+					tally: {
+						choice1: X,
+						choice2: X
+					},
+					is_resovled: (boolean),
+					least_votes_candidates: (array),
+					most_votes_candidates: (array)
+				},
+				rank_2_results: {
+					tally: {
+						choice1: X,
+						choice2: X
+					},
+					is_resovled: (boolean),
+					least_votes_candidates: (array),
+					most_votes_candidates: (array)	
+				}
+	    }
 	  },
 	  round_2: {
 	    tally: {
