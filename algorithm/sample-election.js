@@ -1,33 +1,35 @@
-// *************************************************
-// RUN THIS FILE IN NODE: `node sample-election.js`
-// *************************************************
-
+// ***********************************************************
+//  CAN ALSO RUN THIS FILE IN NODE: `node sample-election.js`
+// ***********************************************************
 // imports election sampler
 const createRankedChoiceElection = require('./ranked-choice-election/election.js');
 // imports arrayShuffler function
 const arrayShuffler = require('./array-methods/array-shuffler.js');
 
-// creates sample ranked choice election
-const election = createRankedChoiceElection();
+function sampleElection () {
 
-// sets the choices or candidates for the election
-election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos']);
+	// creates sample ranked choice election
+	const election = createRankedChoiceElection();
 
-// gets 10 sample votes to test ranked choice caclculation
-for (let i = 0; i < 40; i++) {
-	// adds a random arrangement of the elction choices to the votes
-	election.addRankedVote(arrayShuffler(election.getChoices()));
+	// sets the choices or candidates for the election
+	election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos']);
+
+	// gets 10 sample votes to test ranked choice caclculation
+	for (let i = 0; i < 40; i++) {
+		// adds a random arrangement of the elction choices to the votes
+		election.addRankedVote(arrayShuffler(election.getChoices()));
+	}
+
+	const electionResults = election.calculateResult();
+
+	console.log('\nelection.getChoices()', election.getChoices(), '\n');
+	console.log('\nelection.getVotes():\n', election.getVotes());
+	console.log('\nelectionResults:\n', electionResults);
+
+	return electionResults;
 }
 
-console.log('\nelection.getChoices()', election.getChoices(), '\n');
-console.log('\nelection.getVotes():\n', election.getVotes());
-console.log('\nelection.calculateResult():\n', election.calculateResult());
-
-
-
-
-
-
+module.exports = sampleElection;
 
 
 
