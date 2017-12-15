@@ -84,7 +84,14 @@ function createResults (choices, votes) {
 		// adds election winner to private _resultsData
 		addElectionWinner(winner) {
 			// adds winner to private _resultsData object
-			_resultsData.winner = winner;
+			_resultsData.winner = Object.assign({}, winner);
+		},
+		// it's possible for a winner to initially be set as null but later reset to a different
+		// value, such as if the last candidates are in a tie and there's a runoff to resolve
+		// the tie. this method helps the user reset the round winner so that the results
+		// data is all synced up without inconsistency.
+		updateRoundWinner(roundNum, winner) {
+			_resultsData[`round_${roundNum}`]['winner'] = Object.assign({}, winner);
 		},
 		// adds eliminated candidate to round data at a given roundNum
 		addEliminatedToRoundData(eliminatedArg, roundNum) {
