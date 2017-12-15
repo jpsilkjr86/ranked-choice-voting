@@ -86,6 +86,10 @@ function createResults (choices, votes) {
 			// adds winner to private _resultsData object
 			_resultsData.winner = winner;
 		},
+		// adds eliminated candidate to round data at a given roundNum
+		addEliminatedToRoundData(eliminated, roundNum) {
+			_resultsData[`round_${roundNum}`]['eliminated'] = eliminated;
+		},
 		// adds runoff election results to round data
 		addRunoffResultsToRound(data) {
 			// destructures roundNum and runoff_results from data

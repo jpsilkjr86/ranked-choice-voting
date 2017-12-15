@@ -180,8 +180,8 @@ function createRunoff (candidatesArg, votesArg) {
 		// if runoffCandidates.length == candidatesWithLeastVotes.length (i.e. same number of members)
 		// if (runoffCandidates.length == candidatesWithLeastVotes.length) {
 
-			// if (rankIndex + 1 == _candidates.length) (i.e. if there are no more iterations left)
-			if (rankIndex + 1 == _candidates.length) {
+			// if (rankIndex + 1 == _votes[0].length) (i.e. if there are no more ranks left to count)
+			if (rankIndex + 1 == _votes[0].length) {
 
 				// coin tosses beweent candidatesWithLeastVotes to see who is eliminated. returns results data.
 				results.addEliminatedCandidate(
@@ -191,10 +191,11 @@ function createRunoff (candidatesArg, votesArg) {
 				return results.getData();
 			}
 
-			// else calls _processRunoffCalculation recursively, incrementing rankIndex, passing on candidatesWithLeastVotes
+			// else calls _processRunoffCalculation recursively
 			else {
 				console.log('runoff results', results.getData());
-				return _processRunoffCalculation(++rankIndex, candidatesWithLeastVotes);
+				// in recursive call make sure to pass on incremented rankIndex, candidatesWithLeastVotes and results
+				return _processRunoffCalculation(++rankIndex, candidatesWithLeastVotes, results);
 			}
 
 		// }

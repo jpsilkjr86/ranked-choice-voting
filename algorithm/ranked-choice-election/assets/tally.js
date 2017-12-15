@@ -19,7 +19,7 @@ function createTally(candidatesArg, votesArg) {
 
 	/* Intended strucutre of _tally object: {
 	
-		candiatateOne: [~~],
+		candiatateOne: [~~], // (array holdes the ballots counted toward that candidate)
 		candiatateTwo: [~~],
 		candiatateThree: [~~],
 		candiatateFour: [~~]
@@ -128,18 +128,18 @@ function createTally(candidatesArg, votesArg) {
 		
 		console.log('currentTally at round ' + roundNum + '\n', _tally);
 
-		// retrieves candidate who has more than 50% of the vote, if exists
+		// retrieves candidate who has more than 50% of the vote, if exists (if not then returns null)
 		const winner = _getMajorityVotesCandidate();
+
+		// adds round data to the results data
+		results.addRoundData({
+			roundNum: roundNum,
+			winner: winner, // could be null or object
+			tally: _tally
+		});
 
 		// if there's a winner, adds it to the results data and returns the data (end of calculation)
 		if (winner) {
-			// adds the round data to the results data
-			results.addRoundData({
-				roundNum: roundNum,
-				winner: winner,
-				// eliminated: null,
-				tally: _tally
-			});
 			// adds the winner of the whole election to the results data
 			results.addElectionWinner(winner);
 			// returns the results data (end of calculation)
@@ -162,8 +162,13 @@ function createTally(candidatesArg, votesArg) {
 			// creates a runoff election
 			const runoff = createRunoff(lowestScoreCandidates, _votes);
 
+			// calculates runoff election results
 			const runoffResults = runoff.calculate();
 
+			// adds runoff results to results data at roundNum
+			results.addRunoffResultsToRound({ runoffResults, roundNum });
+
+			// sets local variable eliminated to runoffResults.eliminated
 			eliminated = runoffResults.eliminated;
 		}
 		else {
@@ -171,7 +176,6 @@ function createTally(candidatesArg, votesArg) {
 		}			
 
 		console.log('eliminated', eliminated);
-		
 
 		// now we need to remove the eliminated candidate from the pool
 		// and redistribute their votes among the remaining active candidates.
@@ -181,6 +185,9 @@ function createTally(candidatesArg, votesArg) {
 		
 		// eliminates candidate with least number of votes from _tally (deletes property)
 		_eliminate(eliminated);
+
+		// adds eliminated to the round data
+		results.addEliminatedToRoundData(eliminated, roundNum);
 
 		// the function calls itself recursively, making sure to pass on results,
 		// votesForEliminated and roundNum so as to continue building upon them in the next rounds.
