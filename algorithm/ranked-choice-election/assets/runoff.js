@@ -177,28 +177,21 @@ function createRunoff (candidatesArg, votesArg) {
 		// if the function has reached this point, then there's
 		// more than one candidate in the array. Proceed as follows:
 
-		// if runoffCandidates.length == candidatesWithLeastVotes.length (i.e. same number of members)
-		// if (runoffCandidates.length == candidatesWithLeastVotes.length) {
+		// if (rankIndex + 1 == _votes[0].length) (i.e. if there are no more ranks left to count)
+		if (rankIndex + 1 == _votes[0].length) {
 
-			// if (rankIndex + 1 == _votes[0].length) (i.e. if there are no more ranks left to count)
-			if (rankIndex + 1 == _votes[0].length) {
+			// coin tosses beweent candidatesWithLeastVotes to see who is eliminated. returns results data.
+			results.addEliminatedCandidate(
+				candidatesWithLeastVotes[Math.floor(Math.random() * candidatesWithLeastVotes.length)]
+			);
+			console.log('runoff results', results.getData());
+			return results.getData();
+		}
 
-				// coin tosses beweent candidatesWithLeastVotes to see who is eliminated. returns results data.
-				results.addEliminatedCandidate(
-					candidatesWithLeastVotes[Math.floor(Math.random() * candidatesWithLeastVotes.length)]
-				);
-				console.log('runoff results', results.getData());
-				return results.getData();
-			}
-
-			// else calls _processRunoffCalculation recursively
-			else {
-				console.log('runoff results', results.getData());
-				// in recursive call make sure to pass on incremented rankIndex, candidatesWithLeastVotes and results
-				return _processRunoffCalculation(++rankIndex, candidatesWithLeastVotes, results);
-			}
-
-		// }
+		// if _processRunoffCalculation has reached this point, then proceed by calling itself recursively.
+		console.log('runoff results', results.getData());
+		// in recursive call make sure to pass on incremented rankIndex, candidatesWithLeastVotes and results
+		return _processRunoffCalculation(++rankIndex, candidatesWithLeastVotes, results);
 
 	}; // end of _processRunoffCalculation
 

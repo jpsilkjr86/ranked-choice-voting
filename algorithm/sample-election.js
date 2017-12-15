@@ -12,10 +12,10 @@ function sampleElection () {
 	const election = createRankedChoiceElection();
 
 	// sets the choices or candidates for the election
-	election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos']);
+	election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos', 'Kebab']);
 
 	// gets 10 sample votes to test ranked choice caclculation
-	for (let i = 0; i < 40; i++) {
+	for (let i = 0; i < 50; i++) {
 		// adds a random arrangement of the elction choices to the votes
 		election.addRankedVote(arrayShuffler(election.getChoices()));
 	}

@@ -87,7 +87,20 @@ function createResults (choices, votes) {
 			_resultsData.winner = winner;
 		},
 		// adds eliminated candidate to round data at a given roundNum
-		addEliminatedToRoundData(eliminated, roundNum) {
+		addEliminatedToRoundData(eliminatedArg, roundNum) {
+			// temp variable
+			let eliminated;
+			// if eliminatedArg is an array
+			if (Array.isArray(eliminatedArg)) {
+				// if eliminatedArg has only one element, set eliminated equal to eliminatedArg[0].
+				// otherwise, set it equal to a copy of eliminatedArg 
+				eliminated = (eliminatedArg.length == 1 ? eliminatedArg[0] : [...eliminatedArg]);
+			}
+			// otherwise set eliminated equal to eliminatedArg
+			else {
+				eliminated = eliminatedArg;
+			}
+			// sets eliminated value for round data
 			_resultsData[`round_${roundNum}`]['eliminated'] = eliminated;
 		},
 		// adds runoff election results to round data
