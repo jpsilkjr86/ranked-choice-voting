@@ -85,6 +85,13 @@ function createResults (choices, votes) {
 		addElectionWinner(winner) {
 			// adds winner to private _resultsData object
 			_resultsData.winner = winner;
+		},
+		// adds runoff election results to round data
+		addRunoffResultsToRound(data) {
+			// destructures roundNum and runoff_results from data
+			const { roundNum, runoffResults } = data;
+
+			_resultsData[`round_${roundNum}`]['runoff'] = JSON.parse(JSON.stringify(runoffResults));
 		}
 	};
 

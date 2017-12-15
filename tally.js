@@ -125,6 +125,8 @@ function createTally(candidatesArg, votesArg) {
 
 		// sorts votes to active (non-eliminated) candidate who earned them
 		_sortVotes(votesToCount);
+		
+		console.log('currentTally at round ' + roundNum + '\n', _tally);
 
 		// retrieves candidate who has more than 50% of the vote, if exists
 		const winner = _getMajorityVotesCandidate();
@@ -162,15 +164,12 @@ function createTally(candidatesArg, votesArg) {
 
 			const runoffResults = runoff.calculate();
 
-			console.log('eliminated in run-off election:', runoffResults.eliminated);
-
 			eliminated = runoffResults.eliminated;
 		}
 		else {
 			eliminated = lowestScoreCandidates[0];
 		}			
 
-		console.log('currentTally at round ' + roundNum + '\n', _tally);
 		console.log('eliminated', eliminated);
 		
 
