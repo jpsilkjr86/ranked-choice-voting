@@ -1,0 +1,28 @@
+{
+  "name": "ranked-choice-voting",
+  "version": "1.0.0",
+  "description": "calculates ranked choice election results and returns a JSON object with detailed round-by-round breakdown. can also handle cases where candidates are tied for the least number of votes for a given round, and resolve them by running a runoff election algorith that eliminates the candidate with the least number of first place votes (and proceeds to check second place, third place and so on if there are ties here as well).",
+  "engines": {
+    "node": "6.10.1"
+  },
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpsilkjr86/ranked-choice-voting.git"
+  },
+  "author": "john silkey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpsilkjr86/ranked-choice-voting/issues"
+  },
+  "homepage": "https://github.com/jpsilkjr86/ranked-choice-voting#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0"
+  }
+}
