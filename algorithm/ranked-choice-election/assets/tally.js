@@ -150,8 +150,8 @@ function createTally(candidatesArg, votesArg) {
 			return results.getData();
 		}
 
-		// if the function has reached this point, then there's no winner, and
-		// so it needs to determine a single candidate to eliminate. Logic as follows:
+		// *** if the function has reached this point, then there's no winner. next, the
+		// function needs to determine a single candidate to eliminate. Logic as follows: ***
 
 		// gets candidates with least number of votes
 		// (returns array, which may have 1 or more elements)
@@ -186,6 +186,26 @@ function createTally(candidatesArg, votesArg) {
 
 		// adds eliminated to the round data
 		results.addEliminatedToRoundData(eliminated, roundNum);
+
+		// *** now that we have obtained a single eliminated candidate, we need to check to see if
+		// there are only two candidates left including the eliminated one and, if so, end
+		// the function and return the result. ***
+
+		// if there's only one candidate left besides eliminated one
+		if (Object.keys(_tally).length == 2) {
+			
+			// sets winner as the candidate who has not been eliminated
+			const winningCandidate = (
+				Object.keys(_tally)[0] != eliminated
+					? Object.keys(_tally)[0]
+					: Object.keys(_tally)[1]
+			);
+
+			// adds the winner of the whole election to the results data
+			results.addElectionWinner( { [winningCandidate]: _tally[winningCandidate].length } );
+			// returns the results data (end of calculation)
+			return results.getData();
+		}
 
 		// if function has reached this point, then it now needs extract all votes counted to the
 		// eliminated candidate, remove the eliminated candidate from the candidate pool,
@@ -254,22 +274,5 @@ module.exports = createTally;
 		*/
 
 
-		// // 	console.log('Object.keys(_tally)', Object.keys(_tally));
-		// // 	console.log('Object.keys(_tally).length', Object.keys(_tally).length);
-		// // 	console.log('typeof Object.keys(_tally).length', typeof Object.keys(_tally).length);
-		// // 	console.log('Object.keys(_tally).length == 2', Object.keys(_tally).length == 2);
-		// // if there's only one candidate left besides eliminated one
-		// if (Object.keys(_tally).length == 2) {
 			
-		// 	// winner is set as the candidate who has not been eliminated
-		// 	const winningCandidate = (
-		// 		Object.keys(_tally)[0] != eliminated
-		// 			? Object.keys(_tally)[0]
-		// 			: Object.keys(_tally)[1]
-		// 	);
-
-		// 	// adds the winner of the whole election to the results data
-		// 	results.addElectionWinner( { [winningCandidate]: _tally[winningCandidate].length } );
-		// 	// returns the results data (end of calculation)
-		// 	return results.getData();
-		// }
+		

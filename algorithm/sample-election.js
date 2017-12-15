@@ -15,7 +15,7 @@ function sampleElection () {
 	election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos', 'Kebab']);
 
 	// gets 10 sample votes to test ranked choice caclculation
-	for (let i = 0; i < 50; i++) {
+	for (let i = 0; i < 100; i++) {
 		// adds a random arrangement of the elction choices to the votes
 		election.addRankedVote(arrayShuffler(election.getChoices()));
 	}

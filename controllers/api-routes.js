@@ -6,6 +6,7 @@ module.exports = app => {
 
 	app.get('/sample', (req, res) => {
 		res.json(sampleElection());
+		// res.send(JSON.stringify(sampleElection()));
 	});
 
 	app.post('/election/new', (req, res) => {
