@@ -28,29 +28,35 @@ function createRunoff (candidatesArg, votesArg) {
 			} 
 	*/
 
-	// increments vote tally for a candidate argument
-	const _addVoteToTallyAtRankNum = (candidateName, rankNum) => {
-		// if there's no tally at this rank number, add it to _runoffTally
-		if (!_runoffTally[`rank_${rankNum}_tally`]) {
-			// adds property `rank_${rankNum}_tally` to _runoffTally.
-			// allows it to be writable and enumerable, value as empty object.
-			Object.defineProperty(_runoffTally, `rank_${rankNum}_tally`, {
-			  enumerable: true,
-			  writable: true,
-			  value: {} // empty object is initial value
-			});
-		}
-		// if the candidate doesn't exist at the given rank number in the tally
-		// if there's no tally at this rank number, add it to _runoffTally
-		if (!_runoffTally[`rank_${rankNum}_tally`][candidateName]) {
+	// this function allows us to set up our _runoffTally object to hold data
+	// about a particular rank we are tallying. the goal is to dynamically
+	// build upon our _runoffTally object to account for any number of iterations
+	// through the ranks of the submitted ballots, so that no more and no less
+	// than what we need will be built upon this object.
+	const _initializeTallyAtRankNum = (rankNum, competingCandidates) => {
+		// first adds property `rank_${rankNum}_tally` to _runoffTally.
+		// allows it to be writable and enumerable, with value as empty object.
+		Object.defineProperty(_runoffTally, `rank_${rankNum}_tally`, {
+		  enumerable: true,
+		  writable: true,
+		  value: {} // empty object is initial value
+		});
+
+		// iterates through competingCandidates and builds an object whose key
+		// is equal to the candidates name and whose value is initialized as 0.
+		for (let candidate of competingCandidates) {
 			// adds property [candidateName] to _runoffTally[`rank_${rankNum}_tally`]
 			// allows it to be writable and enumerable, value as empty object.
-			Object.defineProperty(_runoffTally[`rank_${rankNum}_tally`], candidateName, {
+			Object.defineProperty(_runoffTally[`rank_${rankNum}_tally`], candidate, {
 			  enumerable: true,
 			  writable: true,
 			  value: 0 // initial value is 0
 			});
-		}
+		}			
+	}
+
+	// increments vote tally for a candidate argument
+	const _addVoteToTallyAtRankNum = (candidateName, rankNum) => {
 		// increments tally for candidate within `rank_${rankNum}_tally`
 		_runoffTally[`rank_${rankNum}_tally`][candidateName]++;
 	}
@@ -139,6 +145,11 @@ function createRunoff (candidatesArg, votesArg) {
 																							runoffCandidates = [..._candidates],
 																							results = createRunoffResultsHelper(_candidates) ) {
 																							// reults = {} ) {
+		// _initializeTallyAtRankNum sets up _runoffTally at key [`rank_${rankNum}_tally`] as an object
+		// whose keys are the candidates' names and whose values are initalized as 0.
+		// (use '+1' b/c the rank number we're concerned about is 1 + the array index)
+		_initializeTallyAtRankNum((rankIndex + 1), runoffCandidates);
+
 		// iterates through _votes at vote[rankIndex] (in rankIndex=0, checks to see who has the least number of first-place votes)
 		for (let vote of _votes) {
 			// the candidated voted for at vote[rankIndex] exists among runoffCandidates
@@ -242,3 +253,27 @@ module.exports = createRunoff;
 	// const _runoffTally = _candidates.reduce((prev, currentCandidate) => {
 	// 	return Object.assign({}, {currentCandidate: 0});
 	// }, {}); // empty object is first value of reduce
+
+
+
+	// // if there's no tally at this rank number, add it to _runoffTally
+	// 	if (!_runoffTally[`rank_${rankNum}_tally`]) {
+	// 		// adds property `rank_${rankNum}_tally` to _runoffTally.
+	// 		// allows it to be writable and enumerable, value as empty object.
+	// 		Object.defineProperty(_runoffTally, `rank_${rankNum}_tally`, {
+	// 		  enumerable: true,
+	// 		  writable: true,
+	// 		  value: {} // empty object is initial value
+	// 		});
+	// 	}
+	// 	// if the candidate doesn't exist at the given rank number in the tally
+	// 	// if there's no tally at this rank number, add it to _runoffTally
+	// 	if (!_runoffTally[`rank_${rankNum}_tally`][candidateName]) {
+	// 		// adds property [candidateName] to _runoffTally[`rank_${rankNum}_tally`]
+	// 		// allows it to be writable and enumerable, value as empty object.
+	// 		Object.defineProperty(_runoffTally[`rank_${rankNum}_tally`], candidateName, {
+	// 		  enumerable: true,
+	// 		  writable: true,
+	// 		  value: 0 // initial value is 0
+	// 		});
+	// 	}
