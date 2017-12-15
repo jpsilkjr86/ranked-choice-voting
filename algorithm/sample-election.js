@@ -1,7 +1,11 @@
+// *************************************************
+// RUN THIS FILE IN NODE: `node sample-election.js`
+// *************************************************
+
 // imports election sampler
-const createRankedChoiceElection = require('./election.js');
+const createRankedChoiceElection = require('./ranked-choice-election/election.js');
 // imports arrayShuffler function
-const arrayShuffler = require('./array-shuffler.js');
+const arrayShuffler = require('./array-methods/array-shuffler.js');
 
 // creates sample ranked choice election
 const election = createRankedChoiceElection();

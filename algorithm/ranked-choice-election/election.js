@@ -1,5 +1,5 @@
 // dependencies
-const createTally = require('./tally.js');
+const createTally = require('./assets/tally.js');
 
 // createRankedChoiceElection returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)

@@ -1,5 +1,5 @@
 // dependencies
-const createResultsHelper = require('./results-helper.js');
+const createResultsHelper = require('./tally/results-helper.js');
 const createRunoff = require('./runoff.js');
 
 // createTally returns an object with methods that have privileged access

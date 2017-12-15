@@ -1,5 +1,5 @@
 // dependencies
-const createRunoffResultsHelper = require('./runoff-results-helper.js');
+const createRunoffResultsHelper = require('./runoff/runoff-results-helper.js');
 
 // runoff elections are for the purpose of resolving ties between candidates at any point
 // in the ranked-choice-election process. it doesn't determine a winner; it determines who
