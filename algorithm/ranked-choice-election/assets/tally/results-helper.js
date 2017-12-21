@@ -10,8 +10,11 @@
 	      choice2: X,
 	      ~~
 	    },
-	    winner: (null or string),
-	    eliminated: (null or string),
+	    DELETE: winner: (null or string),
+	    ADD: absolute_majority_winner: (null or string), (OK)
+	    ADD: most_votes_candidates: (array),
+	    ADD: least_votes_candidates: (array),
+	    CHANGE: eliminated: (array), (OK)
 	    runoff: {
 				runoff_candidates: (array),
 				eliminated: (string),
@@ -42,7 +45,10 @@
 	      ~~
 	    },
 	    winner: (null or string),
-	    eliminated: (null or string)
+	    absolute_majority_winner: (null or string),
+	    most_votes_candidates: (array),
+	    least_votes_candidates: (array),
+	    eliminated: (array),
 	  },
 	  round_3: {
 	  	~~
@@ -73,8 +79,8 @@ function createResults (choices, votes) {
 			const { roundNum, tally, winner = null, eliminated = null } = data;
 			// sets round-specific data (useful for election analytics and results verification)
 			_resultsData[`round_${roundNum}`] = {
-				// sets winner to null if null; otherwise makes shallow object copy
-				winner: (winner == null ? null : Object.assign({}, winner)),
+				// sets absolute_majority_winner to null if null; otherwise makes shallow object copy
+				absolute_majority_winner: (winner == null ? null : Object.assign({}, winner)),
 				// records deep copy
 				tally: JSON.parse(JSON.stringify(tally)),
 
@@ -90,25 +96,16 @@ function createResults (choices, votes) {
 		// value, such as if the last candidates are in a tie and there's a runoff to resolve
 		// the tie. this method helps the user reset the round winner so that the results
 		// data is all synced up without inconsistency.
-		updateRoundWinner(roundNum, winner) {
-			_resultsData[`round_${roundNum}`]['winner'] = Object.assign({}, winner);
+		updateRoundWinner(roundNum, absolute_majority_winner) {
+			_resultsData[`round_${roundNum}`]['absolute_majority_winner'] = Object.assign({}, absolute_majority_winner);
 		},
 		// adds eliminated candidate to round data at a given roundNum
 		addEliminatedToRoundData(eliminatedArg, roundNum) {
-			// temp variable
-			let eliminated;
-			// if eliminatedArg is an array
-			if (Array.isArray(eliminatedArg)) {
-				// if eliminatedArg has only one element, set eliminated equal to eliminatedArg[0].
-				// otherwise, set it equal to a copy of eliminatedArg 
-				eliminated = (eliminatedArg.length == 1 ? eliminatedArg[0] : [...eliminatedArg]);
-			}
-			// otherwise set eliminated equal to eliminatedArg
-			else {
-				eliminated = eliminatedArg;
-			}
+			// if eliminatedArg is an array, sets elim as an array copy.
+			// otherwise elim is set as an array containing a single element eliminatedArg.
+			let elim = Array.isArray(eliminatedArg) ? [...eliminatedArg] : [eliminatedArg];
 			// sets eliminated value for round data
-			_resultsData[`round_${roundNum}`]['eliminated'] = eliminated;
+			_resultsData[`round_${roundNum}`]['eliminated'] = elim;
 		},
 		// adds runoff election results to round data
 		addRunoffResultsToRound(data) {
@@ -123,3 +120,19 @@ function createResults (choices, votes) {
 }
 
 module.exports = createResults;
+
+
+			// // temp variable
+			// let eliminated;
+			// // if eliminatedArg is an array
+			// if (Array.isArray(eliminatedArg)) {
+			// 	// if eliminatedArg has only one element, set eliminated equal to eliminatedArg[0].
+			// 	// otherwise, set it equal to a copy of eliminatedArg 
+			// 	eliminated = (eliminatedArg.length == 1 ? eliminatedArg[0] : [...eliminatedArg]);
+			// }
+			// // otherwise set eliminated equal to eliminatedArg
+			// else {
+			// 	eliminated = eliminatedArg;
+			// }
+			// // sets eliminated value for round data
+			// _resultsData[`round_${roundNum}`]['eliminated'] = eliminated;
