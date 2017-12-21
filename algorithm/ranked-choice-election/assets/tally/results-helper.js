@@ -64,8 +64,20 @@ function createResults (choices, votes) {
 		// copy of private choices array
 		choices: [...choices],
 		// two-level-deep copy of private votes array
-		submitted_ballots: votes.map(vote => [...vote])
+		submitted_ballots: votes.map(vote => [...vote]),
+		// number of votes cast
+		num_of_votes_cast: votes.length
 	};
+
+	const _calculateSimpleTally = tallyData => {
+		const simpleData = {}
+		// loops through tallyData object
+		for (let candidate in tallyData) {
+			// sets simpleData at key candidate equal to length of array of value at tallyData[candidate]
+			simpleData[candidate] = tallyData[candidate].length;
+		}
+		return simpleData;
+	}
 
 	const resultsPrototype = {
 		// getter for retrieving private _resultsData
@@ -77,12 +89,17 @@ function createResults (choices, votes) {
 		addRoundData(data) {
 			// destructures roundNum, roundTally, winner, eliminated from data
 			const { roundNum, tally, winner = null, eliminated = null } = data;
+			// creates a simple tally based on tally data (simple tally is an object
+			// with just the candidates' names and the number of votes they earned)
+			const simpleTally = _calculateSimpleTally(tally);
 			// sets round-specific data (useful for election analytics and results verification)
 			_resultsData[`round_${roundNum}`] = {
 				// sets absolute_majority_winner to null if null; otherwise makes shallow object copy
 				absolute_majority_winner: (winner == null ? null : Object.assign({}, winner)),
-				// records deep copy
-				tally: JSON.parse(JSON.stringify(tally)),
+				// records deep copy of detailed tally
+				detailed_tally: JSON.parse(JSON.stringify(tally)),
+				// records simple tally data
+				simple_tally: simpleTally,
 
 				eliminated: eliminated
 			};
@@ -91,13 +108,6 @@ function createResults (choices, votes) {
 		addElectionWinner(winner) {
 			// adds winner to private _resultsData object
 			_resultsData.winner = Object.assign({}, winner);
-		},
-		// it's possible for a winner to initially be set as null but later reset to a different
-		// value, such as if the last candidates are in a tie and there's a runoff to resolve
-		// the tie. this method helps the user reset the round winner so that the results
-		// data is all synced up without inconsistency.
-		updateRoundWinner(roundNum, absolute_majority_winner) {
-			_resultsData[`round_${roundNum}`]['absolute_majority_winner'] = Object.assign({}, absolute_majority_winner);
 		},
 		// adds eliminated candidate to round data at a given roundNum
 		addEliminatedToRoundData(eliminatedArg, roundNum) {

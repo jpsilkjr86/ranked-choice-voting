@@ -202,8 +202,6 @@ function createTally(candidatesArg, votesArg) {
 			);
 			// builds an object with the updated winner, to help us update our results data.
 			const updatedWinner = { [winningCandidate]: _tally[winningCandidate].length };
-			// updates the results data for the round with the updatedWinner
-			results.updateRoundWinner(roundNum, updatedWinner);
 			// adds the winner of the whole election to the results data
 			results.addElectionWinner(updatedWinner);
 			// returns the results data (end of calculation)
