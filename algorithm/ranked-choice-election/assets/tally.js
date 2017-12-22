@@ -1,6 +1,7 @@
 // dependencies
 const createResultsHelper = require('./tally/results-helper.js');
 const createRunoff = require('./runoff.js');
+const { getLeastVotesCandidates } = require('./functions.js');
 
 // createTally returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
@@ -83,35 +84,6 @@ function createTally(candidatesArg, votesArg) {
 		return null;
 	}; // end of _getAbsoluteMajorityWinner definition
 
-	// returns the name of the candidate who has received the least number of votes.
-	const _getLowestScoreCandidates = () => {
-		// sets lowest as an initially empty array
-		let lowest = [];
-		// loops through _tally object
-		for (let choice in _tally) {
-			// if there are no elements in lowest, push the choice (first iteration)
-			if (!lowest.length) {
-				lowest.push(choice);
-			}
-			// otherwise compare values
-			else {
-				// if the current choice has fewer votes than lowest[0],
-				// then empties lowest array and sets lowest[0] to the current choice
-				if (_tally[choice].length < _tally[lowest[0]].length) {
-					lowest = [];
-					lowest.push(choice);
-				}
-				// if the current choice has the same number of votes as lowest[0],
-				// then pushes current choice onto the lowest array
-				else if (_tally[choice].length == _tally[lowest[0]].length) {
-					lowest.push(choice);
-				}
-				// if neither of the above two conditions are true, then just continues loop.
-			}
-		}
-		return lowest;
-	}; // end of _getLowestScoreCandidates definition
-
 	const _eliminate = candidate => {
 		// deletes eliminated candidate from _tally
 		delete _tally[candidate];
@@ -155,7 +127,7 @@ function createTally(candidatesArg, votesArg) {
 
 		// gets candidates with least number of votes
 		// (returns array, which may have 1 or more elements)
-		const lowestScoreCandidates =  _getLowestScoreCandidates();
+		const lowestScoreCandidates = getLeastVotesCandidates(_tally);
 		console.log('lowestScoreCandidates', lowestScoreCandidates, '\n');
 		// temp variable
 		let eliminated;
