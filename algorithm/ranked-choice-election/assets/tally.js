@@ -129,28 +129,28 @@ function createTally(candidatesArg, votesArg) {
 		console.log('currentTally at round ' + roundNum + '\n', _tally);
 
 		// retrieves candidate who has more than 50% of the vote, if exists (if not then returns null)
-		const winner = _getAbsoluteMajorityWinner();
+		const absoluteMajorityWinner = _getAbsoluteMajorityWinner();
 
 		// adds round data to the results data
 		results.addRoundData({
 			roundNum: roundNum,
-			winner: winner, // could be null or object
+			winner: absoluteMajorityWinner, // could be null or object
 			tally: _tally
 		});
 
-		// if there's a winner, adds it to the results data and returns the data (end of calculation)
-		if (winner) {
-			// sets eliminatedCandidates to array of any candidate not equal to the winner
-			const eliminatedCandidates = Object.keys(_tally).filter(c => c != winner);
+		// if there's an absoluteMajorityWinner, adds it to results data & returns the data (end of calculation)
+		if (absoluteMajorityWinner) {
+			// sets eliminatedCandidates as an array with any candidate not equal to the absoluteMajorityWinner
+			const eliminatedCandidates = Object.keys(_tally).filter(c => c != absoluteMajorityWinner);
 			// adds the winner of the whole election to the results data
-			results.addElectionWinner(winner);
+			results.addElectionWinner(absoluteMajorityWinner);
 			// adds eliminated to the round data
 			results.addEliminatedToRoundData(eliminatedCandidates, roundNum);
 			// returns the results data (end of calculation)
 			return results.getData();
 		}
 
-		// *** if the function has reached this point, then there's no winner. next, the
+		// *** if the function has reached this point, then there's no absoluteMajorityWinner. next, the
 		// function needs to determine a single candidate to eliminate. Logic as follows: ***
 
 		// gets candidates with least number of votes
