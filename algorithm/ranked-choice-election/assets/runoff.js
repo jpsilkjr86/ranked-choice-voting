@@ -1,5 +1,6 @@
 // dependencies
 const createRunoffResultsHelper = require('./runoff/runoff-results-helper.js');
+const { getMostVotesCandidates, getLeastVotesCandidates } = require('./functions.js');
 
 // runoff elections are for the purpose of resolving ties between candidates at any point
 // in the ranked-choice-election process. it doesn't determine a winner; it determines who
@@ -61,78 +62,6 @@ function createRunoff (candidatesArg, votesArg) {
 		_runoffTally[`rank_${rankNum}_tally`][candidateName]++;
 	}
 
-	// checks which candidate in _runoffTally has the least number of votes
-	// among candidates received as an argument. It is important to make the
-	// competingCandidates an argument that can be passed in, since in theory
-	// it is possible for three or more candidates to be competing in a runoff
-	// election, and for there to be ties even within the runoff election.
-	// this algorithm will resolve this by only passing in candidates who have
-	// received the least number of votes as query parameters in the _runoffTally
-	// object. in this way, candidates who have not received the least number of
-	// votes will be removed from the competingCandidates naturally, but will not
-	// be eliminated from the runoff election as a whole (remembering that the purpose
-	// runoff election algorithm is to return the eliminated candidate, not a winner).
-	const _getLeastVotesCandidatesAtRankNum = (competingCandidates, rankNum) => {
-		// sets lowest as an initially empty array (use `let` so it can be reassigned later)
-		let lowest = [];
-		// saves tallyAtThisRank as _runoffTally[`rank_${rankNum}_tally`]
-		const tallyAtThisRank = _runoffTally[`rank_${rankNum}_tally`];
-		// loops through competingCandidates argument
-		for (let candidate of competingCandidates) {
-			// if there are no elements in lowest, push the candidate (first iteration)
-			if (!lowest.length) {
-				lowest.push(candidate);
-			}
-			// otherwise compare values
-			else {
-				// if the current candidate has fewer votes than lowest[0] (according to _runoffTally),
-				// then empties lowest array and sets lowest[0] to the current candidate
-				if (tallyAtThisRank[candidate] < tallyAtThisRank[lowest[0]]) {
-					lowest = [];
-					lowest.push(candidate);
-				}
-				// if the current candidate has the same number of votes as lowest[0],
-				// then pushes current candidate onto the lowest array
-				else if (tallyAtThisRank[candidate] == tallyAtThisRank[lowest[0]]) {
-					lowest.push(candidate);
-				}
-				// if neither of the above two conditions are true, then just continues loop.
-			}
-		}
-		return lowest;
-	}
-
-	// inverse of above function -- searches for candidate with most votes
-	const _getMostVotesCandidatesAtRankNum = (competingCandidates, rankNum) => {
-		// sets mostVotesCandidate as an initially empty array (use `let` so it can be reassigned later)
-		let mostVotesCandidate = [];
-		// saves tallyAtThisRank as _runoffTally[`rank_${rankNum}_tally`]
-		const tallyAtThisRank = _runoffTally[`rank_${rankNum}_tally`];
-		// loops through competingCandidates argument
-		for (let candidate of competingCandidates) {
-			// if there are no elements in mostVotesCandidate, push the candidate (first iteration)
-			if (!mostVotesCandidate.length) {
-				mostVotesCandidate.push(candidate);
-			}
-			// otherwise compare values
-			else {
-				// if the current candidate has fewer votes than mostVotesCandidate[0] (according to _runoffTally),
-				// then empties mostVotesCandidate array and sets mostVotesCandidate[0] to the current candidate
-				if (tallyAtThisRank[candidate] > tallyAtThisRank[mostVotesCandidate[0]]) {
-					mostVotesCandidate = [];
-					mostVotesCandidate.push(candidate);
-				}
-				// if the current candidate has the same number of votes as mostVotesCandidate[0],
-				// then pushes current candidate onto the mostVotesCandidate array
-				else if (tallyAtThisRank[candidate] == tallyAtThisRank[mostVotesCandidate[0]]) {
-					mostVotesCandidate.push(candidate);
-				}
-				// if neither of the above two conditions are true, then just continues loop.
-			}
-		}
-		return mostVotesCandidate;
-	}
-
 	// calculcates results (can call itself recursively to iterate through the ranks).
 	// the idea is to check to see who has received the least number of first-place votes
 	// and return that candidate as eliminated. If there is a tie for the least number of
@@ -161,8 +90,13 @@ function createRunoff (candidatesArg, votesArg) {
 
 		// finds runoffCandidates with least votes and those with most votes at
 		// a given rank number among the runoffCandidates (both are arrays).
-		const candidatesWithLeastVotes = _getLeastVotesCandidatesAtRankNum(runoffCandidates, rankIndex + 1);
-		const candidatesWithMostVotes = _getMostVotesCandidatesAtRankNum(runoffCandidates, rankIndex + 1);
+		// const candidatesWithLeastVotes = _getLeastVotesCandidatesAtRankNum(runoffCandidates, rankIndex + 1);
+		// const candidatesWithMostVotes = _getMostVotesCandidatesAtRankNum(runoffCandidates, rankIndex + 1);
+
+		// get candidatesWithLeastVotes by passing in _runoffTally at `rank_${rankIndex + 1}_tally`
+		const candidatesWithLeastVotes = getLeastVotesCandidates(_runoffTally[`rank_${rankIndex + 1}_tally`]);
+		// get candidatesWithMostVotes by passing in _runoffTally at `rank_${rankIndex + 1}_tally`
+		const candidatesWithMostVotes = getMostVotesCandidates(_runoffTally[`rank_${rankIndex + 1}_tally`]);
 
 		// isRunoffResolved instantiated as true if there is only one candidate
 		// who has the least number of votes, or false if there is more than one.

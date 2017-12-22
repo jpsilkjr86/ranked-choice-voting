@@ -20,7 +20,7 @@ function createTally(candidatesArg, votesArg) {
 
 	/* Intended strucutre of _tally object: {
 	
-		candiatateOne: [~~], // (array holdes the ballots counted toward that candidate)
+		candiatateOne: [~~], // (array holds the ballots counted toward that candidate)
 		candiatateTwo: [~~],
 		candiatateThree: [~~],
 		candiatateFour: [~~]
