@@ -69,6 +69,8 @@ function createResults (choices, votes) {
 		num_of_votes_cast: votes.length
 	};
 
+	// simple tally data has just the candidates names and the number of votes they earned.
+	// ex: {candidate1: 5, candidate2: 7...}
 	const _calculateSimpleTally = tallyData => {
 		const simpleData = {}
 		// loops through tallyData object
@@ -94,8 +96,8 @@ function createResults (choices, votes) {
 			const simpleTally = _calculateSimpleTally(tally);
 			// sets round-specific data (useful for election analytics and results verification)
 			_resultsData[`round_${roundNum}`] = {
-				// sets absolute_majority_winner to null if null; otherwise makes shallow object copy
-				absolute_majority_winner: (winner == null ? null : Object.assign({}, winner)),
+				// sets absolute_majority_winner (default is null)
+				absolute_majority_winner: winner,
 				// records deep copy of detailed tally
 				detailed_tally: JSON.parse(JSON.stringify(tally)),
 				// records simple tally data
@@ -107,7 +109,7 @@ function createResults (choices, votes) {
 		// adds election winner to private _resultsData
 		addElectionWinner(winner) {
 			// adds winner to private _resultsData object
-			_resultsData.winner = Object.assign({}, winner);
+			_resultsData.winner = winner;
 		},
 		// adds eliminated candidate to round data at a given roundNum
 		addEliminatedToRoundData(eliminatedArg, roundNum) {

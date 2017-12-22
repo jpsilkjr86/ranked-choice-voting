@@ -67,7 +67,7 @@ function createTally(candidatesArg, votesArg) {
 	}; // end of _sortVotes definition
 
 	// checks if any of the candidates has a majority number of votes and, if so, returns the winner.
-	const _getMajorityVotesCandidate = () => {
+	const _getAbsoluteMajorityWinner = () => {
 		// loops through _tally object (the candidate key is a string of the candidate's name.
 		// its tally is the number of votes it has.)
 		for (let candidate in _tally) {
@@ -75,13 +75,13 @@ function createTally(candidatesArg, votesArg) {
 			const numOfVotesForCandidate = _tally[candidate].length;
 			// if the number of the candidate's votes is over 50% of the total number of ballots cast
 			if (( numOfVotesForCandidate / _votes.length) > .5) {
-				// then return the candidate as winner at current _tally (object with choiceName: numOfVotesForCandidate)
-				return {[candidate]: numOfVotesForCandidate};
+				// then return the candidate as winner at current _tally
+				return candidate;
 			}
 		}
 		// if the above loop doesn't return a winner, then return null.
 		return null;
-	}; // end of _getMajorityVotesCandidate definition
+	}; // end of _getAbsoluteMajorityWinner definition
 
 	// returns the name of the candidate who has received the least number of votes.
 	const _getLowestScoreCandidates = () => {
@@ -123,13 +123,13 @@ function createTally(candidatesArg, votesArg) {
 																				roundNum = 1,
 																				results = createResultsHelper(_candidates, _votes) ) {
 
-		// sorts votes to active (non-eliminated) candidate who earned them
+		// sorts votes to active (non-eliminated) candidates who earned them
 		_sortVotes(votesToCount);
 		
 		console.log('currentTally at round ' + roundNum + '\n', _tally);
 
 		// retrieves candidate who has more than 50% of the vote, if exists (if not then returns null)
-		const winner = _getMajorityVotesCandidate();
+		const winner = _getAbsoluteMajorityWinner();
 
 		// adds round data to the results data
 		results.addRoundData({
@@ -141,7 +141,7 @@ function createTally(candidatesArg, votesArg) {
 		// if there's a winner, adds it to the results data and returns the data (end of calculation)
 		if (winner) {
 			// sets eliminatedCandidates to array of any candidate not equal to the winner
-			const eliminatedCandidates = Object.keys(_tally).filter(c => c != Object.keys(winner)[0]);
+			const eliminatedCandidates = Object.keys(_tally).filter(c => c != winner);
 			// adds the winner of the whole election to the results data
 			results.addElectionWinner(winner);
 			// adds eliminated to the round data
@@ -200,10 +200,8 @@ function createTally(candidatesArg, votesArg) {
 					? Object.keys(_tally)[0]
 					: Object.keys(_tally)[1]
 			);
-			// builds an object with the updated winner, to help us update our results data.
-			const updatedWinner = { [winningCandidate]: _tally[winningCandidate].length };
 			// adds the winner of the whole election to the results data
-			results.addElectionWinner(updatedWinner);
+			results.addElectionWinner(winningCandidate);
 			// returns the results data (end of calculation)
 			return results.getData();
 		}
