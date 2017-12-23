@@ -46,7 +46,7 @@ module.exports = {
 			}
 		}
 		return lowest;
-	},
+	}, // end of getLeastVotesCandidates
 
 	// retrieves array of candidates who have most number of votes
 	getMostVotesCandidates(tallyData) {
@@ -91,5 +91,27 @@ module.exports = {
 			}
 		}
 		return most;
-	}
+	}, // end of getMostVotesCandidates
+
+	// checks if any of the candidates has a majority number of votes and, if so, returns the winner.
+	getAbsoluteMajorityWinner(tallyData) {
+		// gets the total number of votes by adding together the length of each array
+		// of votes held by a candidate (accessed via Object.keys(tallyData)).
+		const totalNumOfVotes = Object.keys(tallyData).reduce((sum, currentCandidate) => {
+			return sum + tallyData[currentCandidate].length;
+		}, 0);
+		// loops through tallyData object (the candidate key is a string of the candidate's name.
+		// the value at the key is an array of the votes they have.)
+		for (let candidate in tallyData) {
+			// numOfVotes equals the number of vote elements pushed onto tallyData[candidate]
+			const numOfVotesForCandidate = tallyData[candidate].length;
+			// if the number of the candidate's votes is over 50% of the total number of ballots cast
+			if (( numOfVotesForCandidate / totalNumOfVotes) > .5) {
+				// then return the candidate as winner at current tallyData
+				return candidate;
+			}
+		}
+		// if the above loop doesn't return a winner, then return null.
+		return null;
+	} // end of getAbsoluteMajorityWinner
 };

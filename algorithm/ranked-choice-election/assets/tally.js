@@ -1,7 +1,7 @@
 // dependencies
 const createResultsHelper = require('./tally/results-helper.js');
 const createRunoff = require('./runoff.js');
-const { getLeastVotesCandidates } = require('./functions.js');
+const { getLeastVotesCandidates, getAbsoluteMajorityWinner } = require('./functions.js');
 
 // createTally returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
@@ -67,23 +67,6 @@ function createTally(candidatesArg, votesArg) {
 		} // end of for-of loop
 	}; // end of _sortVotes definition
 
-	// checks if any of the candidates has a majority number of votes and, if so, returns the winner.
-	const _getAbsoluteMajorityWinner = () => {
-		// loops through _tally object (the candidate key is a string of the candidate's name.
-		// its tally is the number of votes it has.)
-		for (let candidate in _tally) {
-			// numOfVotes equals the number of vote elements pushed onto _tally[candidate]
-			const numOfVotesForCandidate = _tally[candidate].length;
-			// if the number of the candidate's votes is over 50% of the total number of ballots cast
-			if (( numOfVotesForCandidate / _votes.length) > .5) {
-				// then return the candidate as winner at current _tally
-				return candidate;
-			}
-		}
-		// if the above loop doesn't return a winner, then return null.
-		return null;
-	}; // end of _getAbsoluteMajorityWinner definition
-
 	const _eliminate = candidate => {
 		// deletes eliminated candidate from _tally
 		delete _tally[candidate];
@@ -101,7 +84,7 @@ function createTally(candidatesArg, votesArg) {
 		console.log('currentTally at round ' + roundNum + '\n', _tally);
 
 		// retrieves candidate who has more than 50% of the vote, if exists (if not then returns null)
-		const absoluteMajorityWinner = _getAbsoluteMajorityWinner();
+		const absoluteMajorityWinner = getAbsoluteMajorityWinner(_tally);
 
 		// adds round data to the results data
 		results.addRoundData({
@@ -215,35 +198,3 @@ function createTally(candidatesArg, votesArg) {
 } // end of createTally
 
 module.exports = createTally;
-
-
-/*
-// sorts votes to active (non-eliminated) candidate who earned them
-		_sortVotes(votesToCount);
-
-		// retrieves candidate who has more than 50% of the vote, if exists
-		const winner = _getMajorityVotesCandidate();
-
-		// if no winner, check for ties among eliminated candidates
-
-		// determines who has been eliminated, if anyone. if no winner, then sets eliminated
-		// equal to the candidate who received the least number of votes. if there is a
-		// winner, then sets it equal to null.
-		const eliminated = (winner == null ? _getLowestScoreCandidate() : null);
-
-		// adds round data to results data
-		results.addRoundData(roundNum, winner, eliminated, _tally);
-
-		console.log('currentTally at round ' + roundNum + '\n', _tally);
-		console.log('eliminated', eliminated);
-
-		// if there's a winner, adds it to the results data and returns the data (end of calculation)
-		if (winner) {
-			results.addElectionWinner(winner);
-			return results.getData();
-		}
-		*/
-
-
-			
-		
