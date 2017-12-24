@@ -120,4 +120,65 @@ function getAbsoluteMajorityWinner(tallyData) {
 	return null;
 } // end of getAbsoluteMajorityWinner
 
-module.exports = { getMostVotesCandidates, getLeastVotesCandidates, getAbsoluteMajorityWinner };
+function eliminateCandidateFromTally(tallyData, candidate) {
+	const copy = JSON.parse(JSON.stringify(tallyData));
+
+	delete copy[candidate];
+
+	return copy;
+}
+
+// distributes the incoming votesToDistribute by pushing them into each 
+// candidate's array within the tallyData object.
+function distributeVotesInTally(tallyData, votesToDistribute) {
+	// always copies tallyData to maintain function purity
+	const copy = JSON.parse(JSON.stringify(tallyData));
+	// loops through votesToDistribute array once
+	for (let vote of votesToDistribute) {
+		// breaking condition for each vote
+		let isTallied = false;
+		// loops through ranked vote, breaks if it reaches the end of the
+		// vote or if isTallied == true. this will ensure that votes are
+		// only tallied for non-eliminated choices.
+		for (let j = 0; j < vote.length && !isTallied; j++) {
+			// if copy object has property "vote[j]"
+			// (i.e. if the choice is still active in the election)
+			if (copy.hasOwnProperty(vote[j])) {
+				// then push the ranked vote onto the property of copy object
+				// that matches the choice at vote[j].
+				copy[vote[j]].push(vote)
+				isTallied = true;
+			}
+		} // end of inner for loop
+	} // end of for-of loop
+	// returns new tally object with votes all distributed
+	return copy;
+} // end of distributeVotesInTally
+
+
+// initializeDetailedTally builds structure and initial values of detailed tally object.
+
+// intended structure: {
+	
+// 	candiatateOne: [~~], // (array holds the ballots counted toward that candidate)
+// 	candiatateTwo: [~~],
+// 	candiatateThree: [~~],
+// 	candiatateFour: [~~]
+
+// } 
+function initializeDetailedTally(candidates) {
+	// .reduce here operates on the candidates array and returns an object whose
+	// keys are set as each element of candidates and whose values are set as empty arrays,
+	// which will hold each ranked vote that is counted toward each candidate.
+	return candidates.reduce((prev, currentCandidate) => {
+		// at each iteration, returns a new object that is combined with the previous iteration's object.
+		return Object.assign({}, prev, {[currentCandidate]: []}); // same as ES6+: {...prev, ~~} ?
+	}, {}); // initial value is empty object (so .reduce knows what to start building upon)
+}
+
+
+module.exports = {
+	getMostVotesCandidates,
+	getLeastVotesCandidates,
+	getAbsoluteMajorityWinner
+};
