@@ -13,18 +13,10 @@ function createRankedChoiceElection () {
 	// _votes array is an array of arrays (each member array represents ranked-choice vote)
 	let _votes = [];
 
-
-	// ********************** PRIVATE FUNCTIONS **********************
-
-	const _calculateElectionResults = () => {
-
-		const rankedChoiceTally = createTally(_choices, _votes);
-
-		const electionResults = rankedChoiceTally.calculate();
-
-		return electionResults;
-
-	}; // end of _calculateElectionResults()
+	// initializes _electionResults as null until the user of the API calls calculateResult()
+	// (enabling data caching to save time, rather than calculating again something that's already
+	// been calculated).
+	let _electionResults = null;
 
 
 	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
@@ -36,7 +28,7 @@ function createRankedChoiceElection () {
 		},
 		getVotes() {
 			// returns deep copy of _votes array (array of arrays) to avoid mutation
-			return JSON.parse(JSON.stringify(_votes));
+			return _votes.map(vote => [...vote]);
 		},
 		setChoices(choicesArg) {
 			// sets _choices equal to a copy of the array argument
@@ -47,10 +39,25 @@ function createRankedChoiceElection () {
 			_votes = votesArg.map(vote => [...vote]);
 		},
 		addRankedVote(vote) {
-			_votes.push(vote);
+			// pushes copy of incoming vote array
+			_votes.push([...vote]);
 		},
 		calculateResult() {
-			return _calculateElectionResults();
+			// if there are _electionResults already cached, then just return it.
+			if (_electionResults) {
+				// returns deep copy
+				return JSON.parse(JSON.stringify(_electionResults));
+			}
+			// if _electionResults have not been calculated yet for this election instance,
+			// then create a new tally instance and set the private _electionResults
+			// to the result of its calculation.
+			else {
+				const rankedChoiceTally = createTally(_choices, _votes);
+
+				_electionResults = rankedChoiceTally.calculate();
+
+				return JSON.parse(JSON.stringify(_electionResults));
+			}
 		}
 	}; // end of electionPrototype
 
