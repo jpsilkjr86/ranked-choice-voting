@@ -1,6 +1,6 @@
 // dependencies
 const createRunoffResultsHelper = require('./runoff/runoff-results-helper.js');
-const { getMostVotesCandidates, getLeastVotesCandidates } = require('./functions.js');
+const Tally = require('./functions.js');
 
 // runoff elections are for the purpose of resolving ties between candidates at any point
 // in the ranked-choice-election process. it doesn't determine a winner; it determines who
@@ -89,14 +89,11 @@ function createRunoff (candidatesArg, votesArg) {
 		}
 
 		// finds runoffCandidates with least votes and those with most votes at
-		// a given rank number among the runoffCandidates (both are arrays).
-		// const candidatesWithLeastVotes = _getLeastVotesCandidatesAtRankNum(runoffCandidates, rankIndex + 1);
-		// const candidatesWithMostVotes = _getMostVotesCandidatesAtRankNum(runoffCandidates, rankIndex + 1);
-
+		// a given rank number among the runoffCandidates (both are arrays)
 		// get candidatesWithLeastVotes by passing in _runoffTally at `rank_${rankIndex + 1}_tally`
-		const candidatesWithLeastVotes = getLeastVotesCandidates(_runoffTally[`rank_${rankIndex + 1}_tally`]);
+		const candidatesWithLeastVotes = Tally.getLeastVotesCandidates(_runoffTally[`rank_${rankIndex + 1}_tally`]);
 		// get candidatesWithMostVotes by passing in _runoffTally at `rank_${rankIndex + 1}_tally`
-		const candidatesWithMostVotes = getMostVotesCandidates(_runoffTally[`rank_${rankIndex + 1}_tally`]);
+		const candidatesWithMostVotes = Tally.getMostVotesCandidates(_runoffTally[`rank_${rankIndex + 1}_tally`]);
 
 		// isRunoffResolved instantiated as true if there is only one candidate
 		// who has the least number of votes, or false if there is more than one.

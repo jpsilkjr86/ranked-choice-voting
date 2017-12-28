@@ -59,7 +59,7 @@
 
 // dependencies
 
-const { getMostVotesCandidates, getLeastVotesCandidates } = require('../functions.js');
+const Tally = require('../functions.js');
 
 function createResults (choices, votes) {
 	
@@ -109,9 +109,9 @@ function createResults (choices, votes) {
 				// sets eliminated (default null)
 				eliminated: eliminated,
 				// sets most_votes_candidates (array)
-				most_votes_candidates: getMostVotesCandidates(tally),
+				most_votes_candidates: Tally.getMostVotesCandidates(tally),
 				// sets least_votes_candidates (array)
-				least_votes_candidates: getLeastVotesCandidates(tally)
+				least_votes_candidates: Tally.getLeastVotesCandidates(tally)
 			};
 		},
 		// adds election winner to private _resultsData

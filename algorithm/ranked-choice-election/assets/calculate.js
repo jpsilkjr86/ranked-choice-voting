@@ -1,16 +1,7 @@
 // dependencies
 const createResultsHelper = require('./tally/results-helper.js');
 const createRunoff = require('./runoff.js');
-const {
-	getMostVotesCandidates,
-	getLeastVotesCandidates,
-	getTotalNumOfVotes,
-	getAbsoluteMajorityWinner,
-	distributeVotesInTally,
-	eliminateCandidateFromTally,
-	initializeDetailedTally,
-	getAllBallotsInTally
-} = require('./functions.js');
+const Tally = require('./functions.js');
 
 // ********** main algorithm of ranked choice election (recursive) **********
 function calculateRankedChoiceTallyResults({ startingTally, votesToCount, roundNum = 1, results = null }) {
@@ -19,12 +10,12 @@ function calculateRankedChoiceTallyResults({ startingTally, votesToCount, roundN
 		results = createResultsHelper(Object.keys(startingTally), votesToCount);
 	}
 	// sorts votes to active (non-eliminated) candidates who earned them
-	const roundTally = distributeVotesInTally(startingTally, votesToCount);
+	const roundTally = Tally.distributeVotes(startingTally, votesToCount);
 	
 	console.log('currentTally at round ' + roundNum + '\n', roundTally);
 
 	// retrieves candidate who has more than 50% of the vote, if exists (if not then returns null)
-	const absoluteMajorityWinner = getAbsoluteMajorityWinner(roundTally);
+	const absoluteMajorityWinner = Tally.getAbsoluteMajorityWinner(roundTally);
 
 	// adds round data to the results data
 	results.addRoundData({
@@ -50,7 +41,7 @@ function calculateRankedChoiceTallyResults({ startingTally, votesToCount, roundN
 
 	// gets candidates with least number of votes
 	// (returns array, which may have 1 or more elements)
-	const lowestScoreCandidates = getLeastVotesCandidates(roundTally);
+	const lowestScoreCandidates = Tally.getLeastVotesCandidates(roundTally);
 	console.log('lowestScoreCandidates', lowestScoreCandidates, '\n');
 	// temp variable
 	let eliminated;
@@ -60,7 +51,7 @@ function calculateRankedChoiceTallyResults({ startingTally, votesToCount, roundN
 		console.log('tie: proceeding to runoff election.', '\n');
 
 		// creates a runoff election
-		const runoff = createRunoff(lowestScoreCandidates, getAllBallotsInTally(roundTally));
+		const runoff = createRunoff(lowestScoreCandidates, Tally.getAllBallots(roundTally));
 
 		// calculates runoff election results
 		const runoffResults = runoff.calculate();
@@ -109,7 +100,7 @@ function calculateRankedChoiceTallyResults({ startingTally, votesToCount, roundN
 	const votesForEliminated = roundTally[eliminated].map(vote => [...vote]);
 	
 	// eliminates candidate with least number of votes from roundTally (deletes property).
-	const tallyAfterElimination = eliminateCandidateFromTally(roundTally, eliminated);
+	const tallyAfterElimination = Tally.eliminateCandidate(roundTally, eliminated);
 
 	// the function calls itself recursively, making sure to pass on necessary data to continue calculation.
 	return calculateRankedChoiceTallyResults({
