@@ -7,13 +7,13 @@ function createRankedChoiceElection () {
 
 	// ****************  PRIVATE VARIABLES IN CLOSURE ****************
 
-	// creates private array "_choices" (list of candidates)
-	let _choices = [];
+	// creates private array "_candidates" (list of candidates)
+	let _candidates = [];
 
 	// _votes array is an array of arrays (each member array represents ranked-choice vote)
 	let _votes = [];
 
-	// initializes _electionResults as null until the user of the API calls calculateResult()
+	// initializes _electionResults as null until the user of the API calls calculateResults()
 	// (enabling data caching to save time, rather than calculating again something that's already
 	// been calculated).
 	let _electionResults = null;
@@ -22,17 +22,17 @@ function createRankedChoiceElection () {
 	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
 
 	const electionPrototype = {
-		// returns copy of choices array rather than ref to it so it can't be mutated
-		getChoices() {
-			return [..._choices];
+		// returns copy of candidates array rather than ref to it so it can't be mutated
+		getCandidates() {
+			return [..._candidates];
 		},
 		getVotes() {
 			// returns deep copy of _votes array (array of arrays) to avoid mutation
 			return _votes.map(vote => [...vote]);
 		},
-		setChoices(choicesArg) {
-			// sets _choices equal to a copy of the array argument
-			_choices = [...choicesArg];
+		setCandidates(candidatesArg) {
+			// sets _candidates equal to a copy of the array argument
+			_candidates = [...candidatesArg];
 		},
 		setVotes(votesArg) {
 			// sets votes equal to a two-level-deep copy of the votesArg array
@@ -42,7 +42,7 @@ function createRankedChoiceElection () {
 			// pushes copy of incoming vote array
 			_votes.push([...vote]);
 		},
-		calculateResult() {
+		calculateResults() {
 			// if there are _electionResults already cached, then just return it.
 			if (_electionResults) {
 				// returns deep copy
@@ -52,7 +52,7 @@ function createRankedChoiceElection () {
 			// then create a new calculation instance and set the private _electionResults
 			// to the result of its calculation.
 			else {
-				_electionResults = calculateRankedChoiceElectionResults(_choices, _votes);
+				_electionResults = calculateRankedChoiceElectionResults(_candidates, _votes);
 				return JSON.parse(JSON.stringify(_electionResults));
 			}
 		}

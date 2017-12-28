@@ -11,18 +11,18 @@ function sampleElection () {
 	// creates sample ranked choice election
 	const election = createRankedChoiceElection();
 
-	// sets the choices or candidates for the election
-	election.setChoices(['Pizza', 'Dumplings', 'Burgers', 'Tacos', 'Kebab']);
+	// sets the candidates or candidates for the election
+	election.setCandidates(['Pizza', 'Dumplings', 'Burgers', 'Tacos', 'Kebab']);
 
 	// gets 10 sample votes to test ranked choice caclculation
 	for (let i = 0; i < 10; i++) {
-		// adds a random arrangement of the elction choices to the votes
-		election.addRankedVote(arrayShuffler(election.getChoices()));
+		// adds a random arrangement of the elction candidates to the votes
+		election.addRankedVote(arrayShuffler(election.getCandidates()));
 	}
 
-	const electionResults = election.calculateResult();
+	const electionResults = election.calculateResults();
 
-	console.log('\nelection.getChoices()', election.getChoices(), '\n');
+	console.log('\nelection.getCandidates()', election.getCandidates(), '\n');
 	console.log('\nelection.getVotes():\n', election.getVotes());
 	console.log('\nelectionResults:\n', electionResults);
 
@@ -36,7 +36,7 @@ module.exports = sampleElection;
 // // testing immutability of setVotes (passed) and if it can overwrite (passed):
 // const sampleVotes = [];
 // for (let i = 0; i < 10; i++) {
-// 	sampleVotes.push(arrayShuffler(election.getChoices()));
+// 	sampleVotes.push(arrayShuffler(election.getCandidates()));
 // }
 
 // election.setVotes(sampleVotes);
@@ -46,21 +46,21 @@ module.exports = sampleElection;
 // console.log('sampleVotes changed:', sampleVotes);
 
 
-// console.log('\nelection.getChoices()', election.getChoices(), '\n');
+// console.log('\nelection.getCandidates()', election.getCandidates(), '\n');
 // console.log('\nelection.getVotes():\n', election.getVotes());
 
 
 
-// // testing immutability of setChoices (passed):
+// // testing immutability of setCandidates (passed):
 
-// const choices = ['Pizza', 'Dumplings', 'Burgers', 'Tacos'];
-// console.log('local choices', choices);
-// election.setChoices(choices);
-// console.log('\nchoices set as:', election.getChoices(), '\n');
+// const candidates = ['Pizza', 'Dumplings', 'Burgers', 'Tacos'];
+// console.log('local candidates', candidates);
+// election.setCandidates(candidates);
+// console.log('\ncandidates set as:', election.getCandidates(), '\n');
 
-// choices[0] = 'King Kong';
-// console.log('local choices', choices);
-// console.log('\nchoices set as:', election.getChoices(), '\n');
+// candidates[0] = 'King Kong';
+// console.log('local candidates', candidates);
+// console.log('\ncandidates set as:', election.getCandidates(), '\n');
 
 
 
@@ -70,16 +70,16 @@ module.exports = sampleElection;
 // election.foo = 'bar';
 
 // console.log('election', election);
-// election.getChoices();
+// election.getCandidates();
 
 // var test = createRankedChoiceElection();
 // console.log('test', test);
 // test.bazz = 'bizz';
 
 // console.log('election', election);
-// election.getChoices();
+// election.getCandidates();
 // console.log('test', test);
-// test.getChoices();
+// test.getCandidates();
 
 
 
@@ -90,19 +90,19 @@ module.exports = sampleElection;
 
 
 // // for testing to see if original data can be mutated
-// const choices = election.getChoices();
+// const candidates = election.getCandidates();
 // const votes = election.getVotes();
 // const tally = election.getCurrentTally();
 
-// choices[0] = 'asfaewfawefawefawfwf';
+// candidates[0] = 'asfaewfawefawefawfwf';
 // votes[0][0] = 'aaaaaaaaaaaaaaaaaaaa';
 // tally['Pizza'] = 17;
-// console.log(choices[0]);
+// console.log(candidates[0]);
 // console.log(votes[0][0]);
 // console.log(tally);
 
 
-// console.log('\noriginal choices after', election.getChoices(), '\n');
+// console.log('\noriginal candidates after', election.getCandidates(), '\n');
 // console.log('\nvotes after:\n', election.getVotes());
 // console.log('\ntally after:\n', election.getCurrentTally());
 
@@ -111,13 +111,13 @@ module.exports = sampleElection;
 // const election2 = createRankedChoiceElection('banana1', 'banana2', 'banana3', 'banana4');
 
 // for (let i = 0; i < 10; i++) {
-// 	election2.addRankedVote(arrayShuffler(election2.getChoices()));
+// 	election2.addRankedVote(arrayShuffler(election2.getCandidates()));
 // }
 
-// console.log('\noriginal choices2', election2.getChoices(), '\n');
+// console.log('\noriginal candidates2', election2.getCandidates(), '\n');
 // console.log('\nvotes2:\n', election2.getVotes());
 // console.log('\ntally2:\n', election2.getCurrentTally());
 
-// console.log('\noriginal choices1 after', election.getChoices(), '\n');
+// console.log('\noriginal candidates1 after', election.getCandidates(), '\n');
 // console.log('\nvotes1 after:\n', election.getVotes());
 // console.log('\ntally1 after:\n', election.getCurrentTally());
