@@ -1,10 +1,5 @@
 // dependencies
-const createResultsHelper = require('./tally/results-helper.js');
-const {
-	getLeastVotesCandidates,
-	getAbsoluteMajorityWinner,
-	calculateRankedChoiceTallyResults
-} = require('./functions.js');
+const calculateRankedChoiceTallyResults = require('./calculate.js');
 
 // createTally returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
@@ -74,6 +69,29 @@ function createTally(candidatesArg, votesArg) {
 		// deletes eliminated candidate from _tally
 		delete _tally[candidate];
 	};
+
+
+	// ************************ Object to Return ************************
+
+	const tallyPrototype = {
+		calculate() {
+			return calculateRankedChoiceTallyResults({
+				startingTally: _tally,
+				votesToCount: _votes
+			});
+		}
+	};
+
+	return Object.assign({}, tallyPrototype);
+
+	// ******************************************************************
+
+} // end of createTally
+
+module.exports = createTally;
+
+
+/*
 
 	// ********** main algorithm of ranked choice election (recursive) **********
 	const _processResultsCalculation = function (	// default parameter values:
@@ -185,23 +203,4 @@ function createTally(candidatesArg, votesArg) {
 
 	// ******************************************************************
 
-
-	// ************************ Object to Return ************************
-
-	const tallyPrototype = {
-		calculate() {
-			return calculateRankedChoiceTallyResults({
-				startingTally: _tally,
-				votesToCount: _votes,
-				results: createResultsHelper(_candidates, _votes)
-			});
-		}
-	};
-
-	return Object.assign({}, tallyPrototype);
-
-	// ******************************************************************
-
-} // end of createTally
-
-module.exports = createTally;
+	*/
