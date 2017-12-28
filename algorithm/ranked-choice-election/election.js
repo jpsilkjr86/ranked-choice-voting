@@ -1,5 +1,5 @@
 // dependencies
-const createTally = require('./assets/tally.js');
+const calculateRankedChoiceElectionResults = require('./assets/calculate.js');
 
 // createRankedChoiceElection returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
@@ -49,13 +49,10 @@ function createRankedChoiceElection () {
 				return JSON.parse(JSON.stringify(_electionResults));
 			}
 			// if _electionResults have not been calculated yet for this election instance,
-			// then create a new tally instance and set the private _electionResults
+			// then create a new calculation instance and set the private _electionResults
 			// to the result of its calculation.
 			else {
-				const rankedChoiceTally = createTally(_choices, _votes);
-
-				_electionResults = rankedChoiceTally.calculate();
-
+				_electionResults = calculateRankedChoiceElectionResults(_choices, _votes);
 				return JSON.parse(JSON.stringify(_electionResults));
 			}
 		}

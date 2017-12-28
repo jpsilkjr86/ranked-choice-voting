@@ -59,7 +59,7 @@
 
 // dependencies
 
-const Tally = require('../functions.js');
+const Tally = require('../tally.js');
 
 function createResults (choices, votes) {
 	
