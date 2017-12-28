@@ -1,7 +1,10 @@
 // dependencies
 const createResultsHelper = require('./tally/results-helper.js');
-const createRunoff = require('./runoff.js');
-const { getLeastVotesCandidates, getAbsoluteMajorityWinner } = require('./functions.js');
+const {
+	getLeastVotesCandidates,
+	getAbsoluteMajorityWinner,
+	calculateRankedChoiceTallyResults
+} = require('./functions.js');
 
 // createTally returns an object with methods that have privileged access
 // to private variables (achieved by creating a closure)
@@ -35,7 +38,7 @@ function createTally(candidatesArg, votesArg) {
 	const _tally = _candidates.reduce((prev, currentCandidate) => {
 		// reduce iterates over each element of candidates and builds an object that
 		// consists of previous candidates (key-value pairs of {candidateName: []}) plus
-		// {currentCandidate: []}.
+		// {currentCandidate: []}./
 		return Object.assign({}, prev, {[currentCandidate]: []}); // same as ES6+: {...prev, ~~} ?
 	}, {}); // initial value is empty object (so .reduce knows what to start building upon)
 
@@ -187,7 +190,11 @@ function createTally(candidatesArg, votesArg) {
 
 	const tallyPrototype = {
 		calculate() {
-			return _processResultsCalculation();
+			return calculateRankedChoiceTallyResults({
+				startingTally: _tally,
+				votesToCount: _votes,
+				results: createResultsHelper(_candidates, _votes)
+			});
 		}
 	};
 
