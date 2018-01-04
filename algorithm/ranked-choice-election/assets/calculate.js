@@ -91,34 +91,35 @@ function calculateRankedChoiceElectionResults(candidates, votes) {
 			return results.getData();
 		}
 
-		// if function has reached this point, then it now needs extract all votes counted to the
-		// eliminated candidate, remove the eliminated candidate from the candidate pool,
-		// and redistribute their votes among the remaining active candidates.
-
-		// extracts votesForEliminated from roundTally at eliminated key (2-level-deep copy)
-		const votesForEliminated = roundTally[eliminated].map(vote => [...vote]);
-		
-		// eliminates candidate with least number of votes from roundTally (deletes property).
-		const tallyAfterElimination = Tally.eliminateCandidate(roundTally, eliminated);
-
-		// the function calls itself recursively, making sure to pass on necessary data to continue calculation.
+		// if caclulateRoundResults() has reached this point, then it means a winner has not yet been determined.
+		// therefore it must call itself recursively, incrementing the round number and passing on a new
+		// startingTally, votesToCount and updated results.
 		return caclulateRoundResults({
-			startingTally: tallyAfterElimination, // the next round builds off the tally just after elimination
-			votesToCount: votesForEliminated, // sort the votes that belonged to the candidate just eliminated
-			roundNum: ++roundNum, // increment the round number
-			results: results // pass on the results
+			// the next round's starting tally is a new one with the eliminated candidate extracted from it
+			startingTally: Tally.extractEliminatedCandidate(roundTally, eliminated),
+			// votesToCount is set as a two-level deep copy of the votes that belonged to the eliminated candidate
+			votesToCount: roundTally[eliminated].map(vote => [...vote]),
+			// next round number is current round number incremented by 1
+			roundNum: ++roundNum,
+			// pass on the results data object
+			results: results
 		});
 	} // end of caclulateRoundResults (inner function)
 
 	// calls above function for the first time, which will call itself recursively as many times as
-	// is needed to caclulate final results. saves results as endResults.
+	// is needed to caclulate final results -- then saves returned value as endResults.
 	const endResults = caclulateRoundResults({
-		roundNum: 1, 
+		// initialy roundNum set to 1
+		roundNum: 1,
+		// startingTally initialized with initializeDetailedTally method, passing in candidates argument
 		startingTally: Tally.initializeDetailedTally(candidates),
+		// votesToCount is the votes argument
 		votesToCount: votes,
+		// initializes a new results object and passes it in
 		results: createResultsHelper(candidates, votes)
 	});
 
+	// returns endResults obtained above
 	return endResults;
 } // end of calculateRankedChoiceElectionResults
 

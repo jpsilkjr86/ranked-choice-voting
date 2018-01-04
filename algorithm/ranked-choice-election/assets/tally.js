@@ -122,7 +122,7 @@ const Tally = {
 		return null;
 	}, // end of getAbsoluteMajorityWinner
 
-	eliminateCandidate(tallyData, candidate) {
+	extractEliminatedCandidate(tallyData, candidate) {
 		const copy = JSON.parse(JSON.stringify(tallyData));
 
 		delete copy[candidate];
@@ -146,9 +146,9 @@ const Tally = {
 				// if copy object has property "vote[j]"
 				// (i.e. if the choice is still active in the election)
 				if (copy.hasOwnProperty(vote[j])) {
-					// then push the ranked vote onto the property of copy object
+					// then pushes a copy of the ranked vote onto the property of the tally copy object
 					// that matches the choice at vote[j].
-					copy[vote[j]].push(vote)
+					copy[vote[j]].push([...vote])
 					isTallied = true;
 				}
 			} // end of inner for loop

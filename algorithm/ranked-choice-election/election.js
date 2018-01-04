@@ -20,8 +20,8 @@ function createRankedChoiceElection () {
 
 	// resets private variable _electionResults to null
 	const _resetResultsToNull = () => {
-		_electionResults = null
-	}
+		_electionResults = null;
+	};
 
 	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
 
