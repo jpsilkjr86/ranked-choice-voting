@@ -20,7 +20,7 @@ function sampleElection () {
 		election.addRankedVote(arrayShuffler(election.getCandidates()));
 	}
 
-	const electionResults = election.calculateResults();
+	const electionResults = election.getResults();
 
 	console.log('\nelection.getCandidates()', election.getCandidates(), '\n');
 	console.log('\nelection.getVotes():\n', election.getVotes());

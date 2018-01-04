@@ -13,11 +13,15 @@ function createRankedChoiceElection () {
 	// _votes array is an array of arrays (each member array represents ranked-choice vote)
 	let _votes = [];
 
-	// initializes _electionResults as null until the user of the API calls calculateResults()
+	// initializes _electionResults as null (changes when getResults() is called)
 	// (enabling data caching to save time, rather than calculating again something that's already
 	// been calculated).
 	let _electionResults = null;
 
+	// resets private variable _electionResults to null
+	const _resetResultsToNull = () => {
+		_electionResults = null
+	}
 
 	// **************** PROTOTYPE OF OBJECT TO RETURN ****************
 
@@ -31,30 +35,39 @@ function createRankedChoiceElection () {
 			return _votes.map(vote => [...vote]);
 		},
 		setCandidates(candidatesArg) {
+			// always resets results to null every time there's a change in a local variable value
+			_resetResultsToNull();
 			// sets _candidates equal to a copy of the array argument
 			_candidates = [...candidatesArg];
 		},
 		setVotes(votesArg) {
+			// always resets results to null every time there's a change in a local variable value
+			_resetResultsToNull();
 			// sets votes equal to a two-level-deep copy of the votesArg array
 			_votes = votesArg.map(vote => [...vote]);
 		},
 		addRankedVote(vote) {
+			// always resets results to null every time there's a change in a local variable value
+			_resetResultsToNull();
 			// pushes copy of incoming vote array
 			_votes.push([...vote]);
 		},
-		calculateResults() {
-			// if there are _electionResults already cached, then just return it.
+		getResults() {
+			// if _votes or _candidates is null, throws exception
+			if (!_candidates || !_votes) {
+				throw new Error('Cannot calculate results for null candidates or null votes.')
+			}
+			// if there are _electionResults already cached, then just returns it.
 			if (_electionResults) {
 				// returns deep copy
 				return JSON.parse(JSON.stringify(_electionResults));
 			}
 			// if _electionResults have not been calculated yet for this election instance,
-			// then create a new calculation instance and set the private _electionResults
-			// to the result of its calculation.
-			else {
-				_electionResults = calculateRankedChoiceElectionResults(_candidates, _votes);
-				return JSON.parse(JSON.stringify(_electionResults));
-			}
+			// then inovke calculateRankedChoiceElectionResults and set the private _electionResults
+			// to the result of the calculation.
+			_electionResults = calculateRankedChoiceElectionResults(_candidates, _votes);
+			// returns deep copy
+			return JSON.parse(JSON.stringify(_electionResults));
 		}
 	}; // end of electionPrototype
 
