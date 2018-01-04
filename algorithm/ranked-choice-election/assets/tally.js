@@ -95,10 +95,16 @@ const Tally = {
 		return most;
 	}, // end of getMostVotesCandidates
 
+	// returns an array of all the candidates
+	getCandidates(tallyData) {
+		return Object.keys(tallyData);
+	},
+
+	// calculates and returns number of votes
 	getTotalNumOfVotes(tallyData) {
 		// gets the total number of votes by adding together the length of each array
 		// of votes held by a candidate (accessed via Object.keys(tallyData)).
-		return Object.keys(tallyData).reduce((sum, currentCandidate) => {
+		return Tally.getCandidates(tallyData).reduce((sum, currentCandidate) => {
 			return sum + tallyData[currentCandidate].length;
 		}, 0);
 	},

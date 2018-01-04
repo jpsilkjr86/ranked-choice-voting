@@ -26,7 +26,7 @@ function calculateRankedChoiceElectionResults(candidates, votes) {
 		// if there's an absoluteMajorityWinner, adds it to results data & returns the data (end of calculation)
 		if (absoluteMajorityWinner) {
 			// sets eliminatedCandidates as an array with any candidate not equal to the absoluteMajorityWinner
-			const eliminatedCandidates = Object.keys(roundTally).filter(c => c != absoluteMajorityWinner);
+			const eliminatedCandidates = Tally.getCandidates(roundTally).filter(c => c != absoluteMajorityWinner);
 			// adds the winner of the whole election to the results data
 			results.addElectionWinner(absoluteMajorityWinner);
 			// adds eliminated to the round data
@@ -77,16 +77,14 @@ function calculateRankedChoiceElectionResults(candidates, votes) {
 		// the function and return the result. ***
 
 		// if there's only one candidate left besides eliminated one
-		if (Object.keys(roundTally).length == 2) {
+		if (Tally.getCandidates(roundTally).length == 2) {
 			
 			// sets winner as the candidate who has not been eliminated
-			const winningCandidate = (
-				Object.keys(roundTally)[0] != eliminated
-					? Object.keys(roundTally)[0]
-					: Object.keys(roundTally)[1]
-			);
+			const winningCandidate = Tally.getCandidates(roundTally).filter(c => c != eliminated)[0];
+
 			// adds the winner of the whole election to the results data
 			results.addElectionWinner(winningCandidate);
+			
 			// returns the results data (end of calculation)
 			return results.getData();
 		}
