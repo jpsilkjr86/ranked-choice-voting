@@ -122,10 +122,13 @@ function createRunoff (candidatesArg, votesArg) {
 		// if (rankIndex + 1 == _votes[0].length) (i.e. if there are no more ranks left to count)
 		if (rankIndex + 1 == _votes[0].length) {
 
-			// coin tosses beweent candidatesWithLeastVotes to see who is eliminated. returns results data.
-			results.addEliminatedCandidate(
-				candidatesWithLeastVotes[Math.floor(Math.random() * candidatesWithLeastVotes.length)]
-			);
+			// since there are no more rank indices at which to compare the competing candidates in the
+			// runoff, the algorithm thus chooses a random candidate to eliminate, then adds this
+			// information to the results data object.
+			results.eliminateRandomCandidate({
+				competing_candidates: candidatesWithLeastVotes,
+				rank_num: rankIndex + 1
+			});
 			console.log('runoff results', results.getData());
 			return results.getData();
 		}

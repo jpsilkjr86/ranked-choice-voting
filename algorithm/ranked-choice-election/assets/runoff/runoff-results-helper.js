@@ -62,6 +62,19 @@ function createRunoffResultsHelper (candidatesArg) {
 		// adds eliminated to private _runoffResultsData
 		addEliminatedCandidate(eliminated) {
 			_runoffResultsData.eliminated = eliminated;
+		},
+		// eliminates random candidate and adds info to _runoffResultsData that says so
+		eliminateRandomCandidate(data) {
+			// destructures these values from incoming data
+			const { competing_candidates, rank_num } = data;
+			const randomly_eliminated = competing_candidates[Math.floor(Math.random() * competing_candidates.length)];
+			// sets rank-specific data (useful for election analytics and results verification)
+			_runoffResultsData[`rank_${rank_num}_results`][`random_resolution_of_tie_breaker`] = {
+				competing_candidates,
+				randomly_eliminated										
+			};
+			// adds to result data
+			_runoffResultsData.eliminated = randomly_eliminated;
 		}
 	};
 
