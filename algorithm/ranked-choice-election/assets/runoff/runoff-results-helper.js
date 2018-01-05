@@ -67,6 +67,7 @@ function createRunoffResultsHelper (candidatesArg) {
 		eliminateRandomCandidate(data) {
 			// destructures these values from incoming data
 			const { competing_candidates, rank_num } = data;
+			// randomly chooses an eliminated candidate from the competing_candidates array
 			const randomly_eliminated = competing_candidates[Math.floor(Math.random() * competing_candidates.length)];
 			// sets rank-specific data (useful for election analytics and results verification)
 			_runoffResultsData[`rank_${rank_num}_results`][`random_resolution_of_tie_breaker`] = {
