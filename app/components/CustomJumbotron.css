@@ -1,0 +1,24 @@
+.with-bkg-img {
+	position: relative;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.alishan {
+	background-image: url('../images/alishan.jpg');
+}
+
+.alishan h1, .alishan p {
+	color: #eee;
+	text-shadow: 0 0 3px #000;
+}
+
+.tw-mountains {
+	background-image: url('../images/tw-mountains.jpg');
+}
+
+.tw-mountains h1, .tw-mountains p {
+	color: #eee;
+	text-shadow: 0 0 3px #444;
+}
