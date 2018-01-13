@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   // entry point for react app
   entry: {
-    app: "./app/app.js"
+    app: "./app/entry.js"
   },
   // output of compiled js (bundle.js)
   output: {
