@@ -6,9 +6,43 @@
 /*:global(.navbar-default) {
 	background-color: #8e9aaa;
 }*/
+/*:global(.navbar-inverse) {
+	background-color: #17204e;
+}*/
+
+/* 
+	Brand colors:
+			Orange: #e07f02
+			Green: #337633
+			Blue: #1a507d (text) & #1761a0 (icon inside)
+			
+	Dark blue color i like: #17204e
+*/
 
 .subnav {
-	margin-top: -20px;
-	min-height: 50px;
-	/*background-color: #ededed;*/
+	margin-top: -20px; /* cancel out margin of bootstrap nav above */
+	min-height: 50px; /* match bootstrap nav */
+	background-color: #17204e;
+	border-bottom: 1px solid #222;
+}
+
+.caption {
+	font-style: italic;
+	line-height: 50px;
+	padding-right: 10%;
+	font-size: 1.2em;
+	color: #eee;
+	float: right;
+}
+
+@media screen and (max-width: 767px) {
+	.caption {
+		font-size: .9em;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.caption {
+		font-size: .75em;
+	}
 }

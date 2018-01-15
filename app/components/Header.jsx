@@ -30,12 +30,10 @@ const Header = () => (
         </Nav>
       </Navbar.Collapse>
     </Navbar>
-    <nav className={`navbar navbar-inverse navbar-static-top ${styles.subnav}`}>
+    <nav className={styles.subnav}>
       <div className="container">
-        <div className="navbar-header pull-right">
-          <Navbar.Brand>
-            <em>Create and manage a ranked choice election in minutes!</em>
-          </Navbar.Brand>
+        <div className={styles.caption}>
+          Create and manage a ranked choice election in minutes!
         </div>
       </div>
     </nav>

@@ -1,14 +1,16 @@
 .with-bkg-img {
-	position: relative;
+	/* position: relative; (not sure if needed) */
+	/* to keep background centered and covering width*/
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
-	/*background-attachment: fixed;*/
+	/* for fixed responsive height */
 	display: flex;
-	min-height: 50vh;
+	min-height: 50vh; /* 50% of page */
 	flex-direction: column;
+	/* cancel out jumbotron margin-bottom*/
 	margin-bottom: 0;
-	margin-top: -20px;
+	/* keep text center-aligned */
 	text-align: center;
 }
 
@@ -23,6 +25,7 @@
 
 .tw-mountains {
 	background-image: url('../images/tw-mountains.jpg');
+	/*background: linear-gradient(to bottom right, #e07f02, #1a507d);*/
 }
 
 .tw-mountains h1, .tw-mountains p {
