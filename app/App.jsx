@@ -1,12 +1,10 @@
 // react dependencies
 import React, { Component } from 'react';
-
-// components from libraries
-import { Grid, Button } from 'react-bootstrap';
+import { Switch, Route } from 'react-router-dom';
 
 // children components
 import Header from './components/Header';
-import CustomJumbotron from './components/CustomJumbotron';
+import LaunchPage from './components/LaunchPage';
 
 // App is the parent component to the rest of the app and the primary state-holder
 class App extends Component {
@@ -22,13 +20,9 @@ class App extends Component {
 			<div>
 				<Header/>
 				<main>
-					<CustomJumbotron background="alishan">
-						<Grid>
-							<h1>Welcome to the Ranked Choice Election App!</h1>
-							<p>What would you like to do?</p>
-							<Button bsStyle="primary">Start a New Election</Button>
-						</Grid>
-					</CustomJumbotron>
+					<Switch>
+						<Route component={LaunchPage}/>
+					</Switch>
 				</main>
 			</div>
 		);

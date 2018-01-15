@@ -6,3 +6,9 @@
 /*:global(.navbar-default) {
 	background-color: #8e9aaa;
 }*/
+
+.subnav {
+	margin-top: -20px;
+	min-height: 50px;
+	/*background-color: #ededed;*/
+}
