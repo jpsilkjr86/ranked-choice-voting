@@ -6,16 +6,32 @@
 /*:global(.navbar-default) {
 	background-color: #8e9aaa;
 }*/
-/*:global(.navbar-inverse) {
+:global(.navbar-inverse) {
 	background-color: #17204e;
-}*/
+	border-bottom: 1px solid #4b393a;
+	margin-bottom: 0; /*to cancel out bootstrap default*/
+}
+
+:global(.navbar-inverse .navbar-nav>.active>a) {
+  color: #fff;
+  background-color: #e07f02;
+}
+:global(.navbar-inverse .navbar-nav>.active>a:focus){
+	color: #fff;
+  background-color: #e07f02;
+}
+
+:global(.navbar-inverse .navbar-nav>.active>a:hover) {
+	color: #fff;
+  background-color: #e07f02;
+}
 
 /* 
 	Brand colors:
 			Orange: #e07f02
 			Green: #337633
 			Blue: #1a507d (text) & #1761a0 (icon inside)
-			
+
 	Dark blue color i like: #17204e
 */
 

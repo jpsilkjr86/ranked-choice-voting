@@ -14,7 +14,7 @@ import styles from './Header.css';
 
 const Header = () => (
   <div>
-    <Navbar staticTop collapseOnSelect>
+    <Navbar staticTop collapseOnSelect inverse>
       <Navbar.Header>
         <Link to="/">
           <Navbar.Brand>
@@ -25,11 +25,19 @@ const Header = () => (
       </Navbar.Header>
       <Navbar.Collapse>
         <Nav pullRight>
+          <LinkContainer exact to="/"><NavItem eventKey={1}>Home</NavItem></LinkContainer>
           <LinkContainer to="/link1"><NavItem eventKey={1}>link1</NavItem></LinkContainer>
           <LinkContainer to="/link2"><NavItem eventKey={2}>link2</NavItem></LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
+  </div>
+);
+
+export default Header;
+
+
+/*
     <nav className={styles.subnav}>
       <div className="container">
         <div className={styles.caption}>
@@ -37,7 +45,5 @@ const Header = () => (
         </div>
       </div>
     </nav>
-  </div>
-);
 
-export default Header;
+    */
