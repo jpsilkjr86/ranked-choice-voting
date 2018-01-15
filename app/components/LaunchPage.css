@@ -1,0 +1,26 @@
+.streamer {
+	display: block;
+	height: 80px;
+	background-color: #dcdcdc;
+	margin: 0;
+}
+
+.caption {
+	font-size: 2em;
+	color: #e07f02;
+	line-height: 80px;
+	text-align: center;
+	margin: 0;
+}
+
+@media screen and (max-width: 767px) {
+	.caption {
+		font-size: 1.4em;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.caption {
+		font-size: 1.2em;
+	}
+}

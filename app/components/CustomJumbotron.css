@@ -6,7 +6,7 @@
 	background-position: center center;
 	/* for fixed responsive height */
 	display: flex;
-	min-height: 50vh; /* 50% of page */
+	min-height: 60vh; /* 50% of page */
 	flex-direction: column;
 	/* cancel out jumbotron margin-bottom*/
 	margin-bottom: 0;
@@ -25,7 +25,6 @@
 
 .tw-mountains {
 	background-image: url('../images/tw-mountains.jpg');
-	/*background: linear-gradient(to bottom right, #e07f02, #1a507d);*/
 }
 
 .tw-mountains h1, .tw-mountains p {
