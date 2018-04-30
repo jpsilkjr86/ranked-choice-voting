@@ -5,13 +5,13 @@
   "engines": {
     "node": "6.10.1"
   },
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-build": "webpack --config webpack.dev.js",
-    "dev": "set NODE_ENV=development&& node server.js",
+    "dev": "set NODE_ENV=development&& node bin/www",
     "heroku-postbuild": "webpack --config webpack.prod.js",
-    "start": "node server.js"
+    "start": "node bin/www"
   },
   "repository": {
     "type": "git",

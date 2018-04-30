@@ -7,7 +7,6 @@ const express = require('express'),
 
 // sets up express app
 const app = express();
-const port = process.env.PORT || 3000;
 
 // ============ Webpack Middleware Configurations (Development Only - "npm run dev") ============
 if (process.env.NODE_ENV === 'development') {
@@ -29,10 +28,8 @@ app.use(bodyParser.text());
 // serves public directory as static, enabling html pages to link with their assets
 app.use(express.static('public'));
 
+// set up routes
 app.use('/api', apiRouter);
 app.use('/', webRouter);
 
-// ================ Connection Establishment ================
-app.listen(port, () => {
-	console.log('App listening on port ' + port);
-});
+module.exports = app;
