@@ -21,7 +21,7 @@ module.exports = app => {
 	// configures webpack middlewares in development mode
 	app.use(webpackHotMiddleware(compiler));
 	app.use(webpackDevMiddleware(compiler, {
-			noInfo: true,
+			// noInfo: true,
 			publicPath: config.output.publicPath
 	}));
 }
